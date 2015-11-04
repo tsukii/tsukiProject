@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">NameCraft</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="MainTitle">NameCraft</string>
+    <string name="start_game">开始战斗</string>
+    <string name="str">力量</string>
+    <string name="intel">智力</string>
+    <string name="agi">敏捷</string>
+    <string name="luc">幸运</string>
+    <string name="atk">攻击</string>
+    <string name="def">防御</string>
+    <string name="userid">名字</string>
+    <string name="exp">经验</string>
+    <string name="money">金钱</string>
+</resources>
