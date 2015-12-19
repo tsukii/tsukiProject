@@ -38,16 +38,6 @@
                 android:background="#ffffff"
                 />
 
-            <TextView
-                android:id="@+id/money"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:text="@string/money"
-                android:textSize="20sp"
-                android:gravity="center"
-                android:layout_marginLeft="1dp"
-                android:background="#ffffff"
-                />
         </TableRow>
     </TableLayout>
     <RelativeLayout

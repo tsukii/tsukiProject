@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
     private final int CONNECT_FAILED=0;
     private final int CONNECT_SUCCESS=1;
     private final int CONNECTING=2;
-    private final int FIRSTCONNECT=4;
+    private final int FIRST_CONNECT=4;
     private Timer timer;
     private TimerTask task;
     Handler mHandler;
@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String name = ((EditText)findViewById(R.id.Main_edit)).getText().toString();
-                if(login_status==FIRSTCONNECT){
+                if(login_status==FIRST_CONNECT){
                     if(name.equals("")){
                         Toast.makeText(getApplicationContext(), "昵称不能为空",
                                 Toast.LENGTH_SHORT).show();
@@ -87,11 +87,11 @@ public class MainActivity extends Activity {
                     case CONNECTING:txtview.setText("正在连接...");relayout.setClickable(false);break;
                     case CONNECT_FAILED:txtview.setText("连接失败,点击屏幕重新连接");relayout.setClickable(true);break;
                     case CONNECT_SUCCESS:txtview.setText("连接成功");startGameActivity((info) msg.obj);break;
-                    case FIRSTCONNECT:txtview.setText("您是第一次玩这个游戏，所以请输入昵称");
+                    case FIRST_CONNECT:txtview.setText("您是第一次玩这个游戏，请输入您的昵称");
                         findViewById(R.id.MainTitle).setVisibility(View.INVISIBLE);
                         //findViewById(R.id.main_layout).clearAnimation();
                         findViewById(R.id.Main_editName).setVisibility(View.VISIBLE);
-                        login_status=FIRSTCONNECT;break;
+                        login_status=FIRST_CONNECT;break;
                     default:break;
                 }
             }
@@ -242,7 +242,7 @@ public class MainActivity extends Activity {
             if(ID.equals("")||password.equals("")){//如果没有预先存储的用户名和密码，就首先获取
                 Log.v("First login",ID+" "+password);
                 Message msg = mHandler.obtainMessage();
-                msg.arg1=FIRSTCONNECT;
+                msg.arg1=FIRST_CONNECT;
                 mHandler.sendMessage(msg);
             }
             else {
@@ -288,65 +288,5 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class info{
-        public info(String name, int level, int exp, int str, int intel, int agi, int luc, int atk, int def) {
-            this.name = name;
-            this.level = level;
-            this.exp = exp;
-            this.str = str;
-            this.intel = intel;
-            this.agi = agi;
-            this.luc = luc;
-            this.atk = atk;
-            this.def = def;
-        }
 
-        public String getName() {
-            return name;
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public int getExp() {
-            return exp;
-        }
-
-        public int getStr() {
-            return str;
-        }
-
-        public int getIntel() {
-            return intel;
-        }
-
-        public int getAgi() {
-            return agi;
-        }
-
-        public int getLuc() {
-            return luc;
-        }
-
-        public int getAtk() {
-            return atk;
-        }
-
-        public int getDef() {
-            return def;
-        }
-
-        private String name;
-        private int level;
-        private int exp;
-        private int str;
-        private int intel;
-        private int agi;
-        private int luc;
-        private int atk;
-        private int def;
-
-
-    }
 }
