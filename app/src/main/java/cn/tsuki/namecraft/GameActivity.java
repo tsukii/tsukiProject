@@ -1,7 +1,7 @@
 package cn.tsuki.namecraft;
 
 import android.app.Activity;
-import android.media.Image;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,7 +9,7 @@ import android.widget.ImageView;
 /**
  * Created by tsuki on 2015/10/28.
  */
-public class GameAcitivity extends Activity {
+public class GameActivity extends Activity {
     private ImageView talentbtn;
     private ImageView skillbtn;
     private ImageView pvpbtn;
@@ -43,6 +43,7 @@ public class GameAcitivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Intent intent = new Intent(GameActivity.this,PVPactivity.class);
 
                     }
                 }

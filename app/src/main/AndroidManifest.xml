@@ -6,26 +6,33 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-        android:screenOrientation="landscape"  >
+        android:screenOrientation="landscape"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape" >
         </activity>
         <activity
-                android:name=".LaunchActivity"
-                android:screenOrientation="landscape" >
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN"/>
+            android:name=".LaunchActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/NoAnimation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                    <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
-            android:name=".GameAcitivity"
-            android:screenOrientation="landscape">
+            android:name=".GameActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/NoAnimation">
+        </activity>
+        <activity
+            android:name=".PVPactivity"
+            android:label="@string/title_activity_pvpactivity" >
         </activity>
     </application>
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
 </manifest>
