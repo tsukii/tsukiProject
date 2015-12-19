@@ -33,6 +33,10 @@ import java.util.TimerTask;
 import java.lang.Thread;
 import java.lang.Runnable;
 
+import cn.tsuki.namecraft.clientJson.Login;
+import cn.tsuki.namecraft.serverJson.RAllocate;
+import cn.tsuki.namecraft.serverJson.RGetHeroAttribute;
+
 
 public class MainActivity extends Activity {
 
@@ -86,7 +90,7 @@ public class MainActivity extends Activity {
                 switch (msg.arg1){
                     case CONNECTING:txtview.setText("正在连接...");relayout.setClickable(false);break;
                     case CONNECT_FAILED:txtview.setText("连接失败,点击屏幕重新连接");relayout.setClickable(true);break;
-                    case CONNECT_SUCCESS:txtview.setText("连接成功");startGameActivity((info) msg.obj);break;
+                    case CONNECT_SUCCESS:txtview.setText("连接成功");if(login_status!=FIRST_CONNECT){startGameActivity((RGetHeroAttribute) msg.obj);}break;
                     case FIRST_CONNECT:txtview.setText("您是第一次玩这个游戏，请输入您的昵称");
                         findViewById(R.id.MainTitle).setVisibility(View.INVISIBLE);
                         //findViewById(R.id.main_layout).clearAnimation();
@@ -128,19 +132,30 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void startGameActivity(info gameinfo){
+    private void startGameActivity(RGetHeroAttribute gameinfo){
         timerTaskCancel();
         Intent in = new Intent(MainActivity.this,GameActivity.class);
         Bundle mBundle= new Bundle();
-        mBundle.putString("Name",gameinfo.getName());
+        mBundle.putString("Name", gameinfo.getRoleName());
+        mBundle.putString("ID", gameinfo.getRoleID());
+        mBundle.putInt("type", gameinfo.getHeroType());
         mBundle.putInt("lv", gameinfo.getLevel());
         mBundle.putInt("exp",gameinfo.getExp());
-        mBundle.putInt("str",gameinfo.getStr());
+        mBundle.putInt("str",gameinfo.getPower());
         mBundle.putInt("intel",gameinfo.getIntel());
         mBundle.putInt("agi",gameinfo.getAgi());
-        mBundle.putInt("luc",gameinfo.getLuc());
+        mBundle.putInt("luc",gameinfo.getLucky());
         mBundle.putInt("atk",gameinfo.getAtk());
-        mBundle.putInt("def",gameinfo.getDef());
+        mBundle.putInt("def",gameinfo.getDefense());
+        mBundle.putInt("hp",gameinfo.getHp());
+        mBundle.putInt("AbiliAvailable",gameinfo.getAbiliAvailable());
+        mBundle.putInt("AttriAvailable", gameinfo.getAttriAvailable());
+        mBundle.putInt("AbilityLevel1",gameinfo.getAbilityLevel1());
+        mBundle.putInt("AbilityLevel2",gameinfo.getAbilityLevel2());
+        mBundle.putInt("AbilityLevel3",gameinfo.getAbilityLevel3());
+        mBundle.putInt("AbilityLevel4",gameinfo.getAbilityLevel4());
+        mBundle.putInt("AbilityLevel5",gameinfo.getAbilityLevel5());
+        mBundle.putInt("AbilityLevel6",gameinfo.getAbilityLevel6());
         in.putExtras(mBundle);
         startActivity(in);
         this.finish();
@@ -234,33 +249,49 @@ public class MainActivity extends Activity {
 
         @Override
         public void run() {
-
+            Message msg = mHandler.obtainMessage();
+            Login login = new Login();
             SharedPreferences pref = getSharedPreferences("setting", Context.MODE_PRIVATE);
             ID=pref.getString("ID","");
             password=pref.getString("password","");
             Log.v("ID psd",ID+" "+password);
             if(ID.equals("")||password.equals("")){//如果没有预先存储的用户名和密码，就首先获取
                 Log.v("First login",ID+" "+password);
-                Message msg = mHandler.obtainMessage();
-                msg.arg1=FIRST_CONNECT;
-                mHandler.sendMessage(msg);
+                login_status=FIRST_CONNECT;
+                login.setFirstLogin(1);
+            }else{
+                login.setUserId(ID);
+                login.setUserPassword(password);
             }
-            else {
-                Log.v("else","");
-                //得到ID和密码后登录
-                Socket mSocket =null;
-                try{
-                    mSocket=new Socket(host,port);
-                }catch (IOException e){
-                    Message msg = mHandler.obtainMessage();
-                    msg.arg1=CONNECT_FAILED;
-                    mHandler.sendMessage(msg);
-                    return;
-                }
-                Message msg = mHandler.obtainMessage();
-                msg.arg1=CONNECTING;
+
+            Log.v("else","");
+            //登录
+            Socket mSocket =null;
+            msg.arg1=CONNECTING;
+            mHandler.sendMessage(msg);
+            try{
+                mSocket=new Socket(host,port);
+            }catch (IOException e){
+                msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
+                return;
             }
+            msg.arg1=CONNECT_SUCCESS;
+            mHandler.sendMessage(msg);
+            //TODO 发送login请求
+
+
+            //==========================
+
+            String jsonString=null;
+            try{
+                BufferedReader bf =  new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+                jsonString = bf.readLine();
+            }catch (IOException e){
+                Log.v("bR IOException",e.getCause().toString());
+            }
+
+
 
         }
 
