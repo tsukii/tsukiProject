@@ -2,6 +2,7 @@ package cn.tsuki.namecraft;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -31,11 +32,14 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.lang.Thread;
 import java.lang.Runnable;
 
+import cn.tsuki.namecraft.clientJson.CreateHero;
+import cn.tsuki.namecraft.clientJson.GetHeroAttribute;
 import cn.tsuki.namecraft.clientJson.Login;
 import cn.tsuki.namecraft.jsonTools.Jsons;
 import cn.tsuki.namecraft.serverJson.RAllocate;
@@ -49,6 +53,9 @@ public class MainActivity extends Activity {
     private final int CONNECTING=2;
     private final int FIRST_CONNECT=4;
     private final int GET_MESSAGE=5;
+    private final int TEXT_CLICK_DIS=6;
+    private final int TEXT_CLICK_ABL=7;
+    private final int NEW_ACTIVITY=8;
     private Timer timer;
     private TimerTask task;
     Handler mHandler;
@@ -58,7 +65,10 @@ public class MainActivity extends Activity {
     private int textsize;
     //private info minfo;
     private int login_status;
-
+    private int hero_type;
+    private TextView role1;
+    private TextView role2;
+    private TextView role3;
 
     final private String HOST = "192.168.1.106";
     final private int PORT = 8888;
@@ -68,12 +78,59 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         relayout=(RelativeLayout)findViewById(R.id.main_layout);
         txtview=(TextView)findViewById(R.id.main_startbtn);
+        role1=(TextView)findViewById(R.id.main_role_1);
+        role2=(TextView)findViewById(R.id.main_role_2);
+        role3=(TextView)findViewById(R.id.main_role_3);
+
         login_status=0;
+        hero_type=0;
+
+        role1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hero_type=1;
+                role1.setBackgroundColor(0x888888);
+                role2.setBackgroundColor(0xffffff);
+                role3.setBackgroundColor(0xffffff);
+            }
+        });
+        role2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hero_type=2;
+                role2.setBackgroundColor(0x888888);
+                role1.setBackgroundColor(0xffffff);
+                role3.setBackgroundColor(0xffffff);
+            }
+        });
+        role3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hero_type=3;
+                role3.setBackgroundColor(0x888888);
+                role2.setBackgroundColor(0xffffff);
+                role1.setBackgroundColor(0xffffff);
+            }
+        });
         relayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                connectThread thread_connect = new connectThread(HOST,PORT);
-                new Thread(thread_connect).start();
+                if(login_status==NEW_ACTIVITY){
+
+                }else if(login_status==FIRST_CONNECT){
+                    String name = ((EditText)findViewById(R.id.Main_edit)).getText().toString();
+                    if(name.equals("")){
+                        Toast.makeText(getApplicationContext(),"名字不能为空",Toast.LENGTH_SHORT).show();
+                    }else if(hero_type==0){
+                        Toast.makeText(getApplicationContext(),"请选择职业",Toast.LENGTH_SHORT).show();
+                    }else{
+                        createHeroThread th_create = new createHeroThread(HOST, PORT, name, hero_type);
+                    }
+                }else {
+                    connectThread thread_connect = new connectThread(HOST, PORT);
+                    new Thread(thread_connect).start();
+                }
+
             }
         });
         textTwinkle();
@@ -84,18 +141,27 @@ public class MainActivity extends Activity {
                 switch (msg.arg1){
                     case CONNECTING:txtview.setText("正在连接...");relayout.setClickable(false);break;
                     case CONNECT_FAILED:txtview.setText("连接失败,点击屏幕重新连接");relayout.setClickable(true);break;
-                    case CONNECT_SUCCESS:txtview.setText("连接成功");if(login_status!=FIRST_CONNECT){startGameActivity((RGetHeroAttribute) msg.obj);}break;
-                    case FIRST_CONNECT:txtview.setText("您是第一次玩这个游戏，请输入您的昵称并选择职业");
+                    case CONNECT_SUCCESS:txtview.setText("连接成功");break;
+                    case FIRST_CONNECT:txtview.setText("请输入您的名字并选择职业");
                         findViewById(R.id.MainTitle).setVisibility(View.INVISIBLE);
                         //findViewById(R.id.main_layout).clearAnimation();
                         findViewById(R.id.Main_editName).setVisibility(View.VISIBLE);
                         login_status=FIRST_CONNECT;break;
                     case GET_MESSAGE:txtview.setText("正在获取信息。。。");break;
+                    case TEXT_CLICK_DIS:relayout.setClickable(false);break;
+                    case TEXT_CLICK_ABL:relayout.setClickable(true);break;
+                    case NEW_ACTIVITY:startGameActivity((JSONObject)msg.obj);break;
+                    default:break;
+                }
+                switch (msg.arg2){
+                    case TEXT_CLICK_DIS:relayout.setClickable(false);break;
+                    case TEXT_CLICK_ABL:relayout.setClickable(true);break;
                     default:break;
                 }
             }
         };
     }
+
 
     private void textTwinkle(){
         alpha=0;
@@ -127,106 +193,144 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void startGameActivity(RGetHeroAttribute gameinfo){
+    private void startGameActivity(JSONObject gameinfo){
         timerTaskCancel();
         Intent in = new Intent(MainActivity.this,GameActivity.class);
         Bundle mBundle= new Bundle();
-        mBundle.putString("Name", gameinfo.getRoleName());
-        mBundle.putString("ID", gameinfo.getRoleID());
-        mBundle.putInt("type", gameinfo.getHeroType());
-        mBundle.putInt("lv", gameinfo.getLevel());
-        mBundle.putInt("exp",gameinfo.getExp());
-        mBundle.putInt("str",gameinfo.getPower());
-        mBundle.putInt("intel",gameinfo.getIntel());
-        mBundle.putInt("agi",gameinfo.getAgi());
-        mBundle.putInt("luc",gameinfo.getLucky());
-        mBundle.putInt("atk",gameinfo.getAtk());
-        mBundle.putInt("def",gameinfo.getDefense());
-        mBundle.putInt("hp",gameinfo.getHp());
-        mBundle.putInt("AbiliAvailable",gameinfo.getAbiliAvailable());
-        mBundle.putInt("AttriAvailable", gameinfo.getAttriAvailable());
-        mBundle.putInt("AbilityLevel1",gameinfo.getAbilityLevel1());
-        mBundle.putInt("AbilityLevel2",gameinfo.getAbilityLevel2());
-        mBundle.putInt("AbilityLevel3",gameinfo.getAbilityLevel3());
-        mBundle.putInt("AbilityLevel4",gameinfo.getAbilityLevel4());
-        mBundle.putInt("AbilityLevel5",gameinfo.getAbilityLevel5());
-        mBundle.putInt("AbilityLevel6",gameinfo.getAbilityLevel6());
+        try{
+            mBundle.putString("Name", gameinfo.getString("RoleName"));
+            mBundle.putString("ID", gameinfo.getString("RoleID"));
+            mBundle.putInt("type", gameinfo.getInt("HeroType"));
+            mBundle.putInt("lv", gameinfo.getInt("Level"));
+            mBundle.putInt("exp",gameinfo.getInt("Exp"));
+            mBundle.putInt("str",gameinfo.getInt("Power"));
+            mBundle.putInt("intel",gameinfo.getInt("Intel"));
+            mBundle.putInt("agi",gameinfo.getInt("Agi"));
+            mBundle.putInt("luc",gameinfo.getInt("Lucky"));
+            mBundle.putInt("atk",gameinfo.getInt("Atk"));
+            mBundle.putInt("def",gameinfo.getInt("Defense"));
+            mBundle.putInt("hp",gameinfo.getInt("Hp"));
+            mBundle.putInt("AbiliAvailable",gameinfo.getInt("AbiliAvailable"));
+            mBundle.putInt("AttriAvailable", gameinfo.getInt("AttriAvailable"));
+            mBundle.putInt("AbilityLevel1",gameinfo.getInt("AbilityLevel1"));
+            mBundle.putInt("AbilityLevel2",gameinfo.getInt("AbilityLevel2"));
+            mBundle.putInt("AbilityLevel3",gameinfo.getInt("AbilityLevel3"));
+            mBundle.putInt("AbilityLevel4", gameinfo.getInt("AbilityLevel4"));
+            mBundle.putInt("AbilityLevel5", gameinfo.getInt("AbilityLevel5"));
+            mBundle.putInt("AbilityLevel6", gameinfo.getInt("AbilityLevel6"));
+        }catch (JSONException e){
+            Log.d("json Convert","filed");
+        }
         in.putExtras(mBundle);
         startActivity(in);
         this.finish();
     }
 
-    class getIDPassword implements Runnable{
+    class createHeroThread implements Runnable{
         private String host;
         private int port;
         private String ID;
-        private String password;
         private String name;
+        private int type;
 
-        public getIDPassword(String host, int port,String name) {
+        public createHeroThread(String host, int port,  String name, int type) {
             this.host = host;
             this.port = port;
             this.name = name;
+            this.type = type;
+            this.ID=getSharedPreferences("setting", Context.MODE_PRIVATE).getString("ID", "");
+            //ID=pref.getString("ID","");
         }
 
         @Override
         public void run() {
+
+            Message msg=mHandler.obtainMessage();
+            msg.arg1=CONNECTING;
+            msg.arg2=TEXT_CLICK_DIS;
+            mHandler.sendMessage(msg);
             Socket mSocket =null;
             try{
                 mSocket=new Socket(host,port);
             }catch (IOException e){
-                Message msg = mHandler.obtainMessage();
+                msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
                 mHandler.sendMessage(msg);
+                return;
             }
-            Message msg = mHandler.obtainMessage();
-            msg.arg1=CONNECTING;
-            mHandler.sendMessage(msg);
-            JSONObject jsonobj = new JSONObject();
-            try{
-                jsonobj.put("type", "login_0");
-                jsonobj.put("name", this.name);
+
+            CreateHero createHero = new CreateHero(name,ID,type);
+            try {
+                ArrayList<CreateHero> alist = new ArrayList<>();
+                alist.add(createHero);
+                String jsonString = Jsons.buildJson(2, "CreateHero", 1, Jsons.buildJsonArray(alist).toString());
+                Log.d("jsons", jsonString);
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
+                writer.write(jsonString);writer.newLine();
+                writer.flush();
             }catch (JSONException e){
-                Log.v("json trans",e.getCause().toString());
-            }
-            String jsonString=jsonobj.toString();
-            Log.v("jsonString:",jsonString);
-            try {
-                OutputStream os = mSocket.getOutputStream();
-                os.write(jsonString.getBytes());
-                os.flush();
-                mSocket.shutdownOutput();
-            }catch (UnknownHostException e) {
-                Log.v("output Unknown",e.getCause().toString());
-            }catch (IOException e){
-                Log.v("output IOException",e.getCause().toString());
-            }
-            try{
-                BufferedReader bf =  new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
-                jsonString = bf.readLine();
-            }catch (UnknownHostException e) {
-                Log.v("input Unknown",e.getCause().toString());
-            }catch (IOException e){
-                Log.v("input IOException",e.getCause().toString());
-            }
-            try {
-                jsonobj = new JSONObject(jsonString);
-                ID=jsonobj.getString("ID");
-                password=jsonobj.getString("password");
-            }catch (JSONException e){
-                Log.v("get ID and password",ID+" "+password);
-            }
-            SharedPreferences pref = getSharedPreferences("setting", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString("ID",ID);
-            editor.putString("password",password);
-            editor.apply();
-            try {
-                mSocket.close();
+                e.printStackTrace();
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
+                return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("getIDPassword:",e.getCause().toString());
+                Log.v("socketos", e.getCause().toString());
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
+                return;
             }
+
+            String recString=null;
+            try{
+                BufferedReader bf =  new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+                String jsonString = bf.readLine();
+                Log.d("bfr", jsonString);
+                JSONObject jobject = new JSONObject(jsonString);
+                if((jobject.getInt("JsonType")!=2)&&("RCreateHero".equals(jobject.getString("ObjectType")))){
+                    throw new JSONException("");
+                }
+                recString=jobject.getString("Content");
+            }catch (IOException e){
+                Log.v("bR IOException",e.getCause().toString());
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
+                return;
+            }catch (JSONException e){
+                Toast.makeText(getApplicationContext(), "校验失败", Toast.LENGTH_SHORT).show();
+                //return;
+            }finally {
+                try {
+                    mSocket.close();
+                }catch (IOException e){
+                    //return;
+                }
+            }
+
+            try {
+                JSONObject jobject = new JSONObject(recString);
+                if(jobject.getInt("ReturnNum")==0){
+                    throw new JSONException("");
+                }
+            }catch (JSONException e){
+                Toast.makeText(getApplicationContext(), "连接错误", Toast.LENGTH_SHORT).show();
+                return;
+            }finally {
+                msg=mHandler.obtainMessage();
+                msg.arg1=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
+
+            }
+
+            login_status=NEW_ACTIVITY;
+
         }
     }
 
@@ -245,6 +349,9 @@ public class MainActivity extends Activity {
         @Override
         public void run() {
 
+            Message msg =mHandler.obtainMessage();
+            msg.arg1=TEXT_CLICK_DIS;
+            mHandler.sendMessage(msg);
             Login login = new Login();
             SharedPreferences pref = getSharedPreferences("setting", Context.MODE_PRIVATE);
             ID=pref.getString("ID","");
@@ -258,13 +365,14 @@ public class MainActivity extends Activity {
                 login.setFirstLogin(0);
                 login.setUserId(ID);
                 login.setUserPassword(password);
+                login_status=NEW_ACTIVITY;
             }
 
             Log.v("else","");
             //登录
 
             Socket mSocket =null;
-            Message msg = mHandler.obtainMessage();
+            msg = mHandler.obtainMessage();
             msg.arg1=CONNECTING;
             mHandler.sendMessage(msg);
             try{
@@ -273,6 +381,7 @@ public class MainActivity extends Activity {
             }catch (IOException e){
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
                 mHandler.sendMessage(msg);
                 //mSocket.close();
                 return;
@@ -282,9 +391,9 @@ public class MainActivity extends Activity {
             mHandler.sendMessage(msg);
             //TODO 发送login请求
             try {
-                ArrayList<Object> alist = new ArrayList<>();
+                ArrayList<Login> alist = new ArrayList<>();
                 alist.add(login);
-                String jsonString = Jsons.buildJson(1, "Login", 1, Jsons.buildJsonArray(alist).toString());
+                String jsonString = Jsons.buildJson(5, "Login", 1, Jsons.buildJsonArray(alist).toString());
                 Log.d("jsons", jsonString);
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
                 writer.write(jsonString);writer.newLine();
@@ -292,16 +401,18 @@ public class MainActivity extends Activity {
                 //mSocket.shutdownOutput();
             }catch (JSONException e){
                 e.printStackTrace();
-                Log.v("buildjosn",e.getCause().toString());
+                Log.v("buildjosn", e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
                 mHandler.sendMessage(msg);
                 return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("socketos",e.getCause().toString());
+                Log.v("socketos", e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
                 mHandler.sendMessage(msg);
                 return;
             }
@@ -309,13 +420,13 @@ public class MainActivity extends Activity {
 
 
 
-            String recString;
+            String recString=null;
             try{
                 BufferedReader bf =  new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=5)&&("RLogin".equals(jobject.getInt("ObjectType")))){
+                if((jobject.getInt("JsonType")!=5)&&("RLogin".equals(jobject.getString("ObjectType")))){
                     throw new JSONException("");
                 }
                 recString=jobject.getString("Content");
@@ -323,16 +434,17 @@ public class MainActivity extends Activity {
                 Log.v("bR IOException",e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
                 mHandler.sendMessage(msg);
                 return;
             }catch (JSONException e){
                 Toast.makeText(getApplicationContext(), "校验失败", Toast.LENGTH_SHORT).show();
-                return;
+                //return;
             }finally {
                 try {
                     mSocket.close();
                 }catch (IOException e){
-                    return;
+                    //return;
                 }
             }
 
@@ -346,14 +458,117 @@ public class MainActivity extends Activity {
                 editor.apply();
             }catch (JSONException e){
                 Toast.makeText(getApplicationContext(), "校验失败", Toast.LENGTH_SHORT).show();
-                return;
+                //return;
+            }finally {
+                msg=mHandler.obtainMessage();
+                msg.arg1=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
             }
-
+//            msg = mHandler.obtainMessage();
+//            msg.arg1=GET_MESSAGE;
+//            mHandler.sendMessage(msg);
+            if(login_status==FIRST_CONNECT){
+                msg = mHandler.obtainMessage();
+                msg.arg1=FIRST_CONNECT;
+                mHandler.sendMessage(msg);
+            }
 
 
 
         }
 
+    }
+
+    class getAttiThread implements Runnable{
+        private String ID;
+        private String host;
+        private int port;
+
+        public  getAttiThread(String host,int port){
+            this.host=host;
+            this.port=port;
+            this.ID=getSharedPreferences("setting", Context.MODE_PRIVATE).getString("ID", "");
+        }
+
+        @Override
+        public void run() {
+            Message msg=mHandler.obtainMessage();
+            msg.arg1=CONNECTING;
+            msg.arg2=TEXT_CLICK_DIS;
+            mHandler.sendMessage(msg);
+            Socket mSocket =null;
+            try{
+                mSocket=new Socket(host,port);
+            }catch (IOException e){
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
+                return;
+            }
+
+            GetHeroAttribute getHeroAttribute = new GetHeroAttribute(ID);
+            try {
+                ArrayList<GetHeroAttribute> alist = new ArrayList<>();
+                alist.add(getHeroAttribute);
+                String jsonString = Jsons.buildJson(3, "GetHeroAttribute", 1, Jsons.buildJsonArray(alist).toString());
+                Log.d("jsons", jsonString);
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
+                writer.write(jsonString);writer.newLine();
+                writer.flush();
+            }catch (JSONException e){
+                e.printStackTrace();
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
+                return;
+            }catch (IOException e){
+                e.printStackTrace();
+                Log.v("socketos", e.getCause().toString());
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
+                return;
+            }
+
+            String recString;
+            JSONObject jsonObject=null;
+            try{
+                BufferedReader bf =  new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+                String jsonString = bf.readLine();
+                Log.d("bfr", jsonString);
+                JSONObject jobject = new JSONObject(jsonString);
+                if((jobject.getInt("JsonType")!=3)&&(!"RGetHeroAttribute".equals(jobject.getString("ObjectType")))){
+                    throw new JSONException("");
+                }
+                recString=jobject.getString("Content");
+                jsonObject = new JSONObject(recString);
+            }catch (IOException e){
+                Log.v("bR IOException",e.getCause().toString());
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                msg.arg2=TEXT_CLICK_ABL;
+                mHandler.sendMessage(msg);
+                return;
+            }catch (JSONException e){
+                Toast.makeText(getApplicationContext(), "校验失败", Toast.LENGTH_SHORT).show();
+                return;
+            }finally {
+                try {
+                    mSocket.close();
+                }catch (IOException e){
+                    //return;
+                }
+                msg=mHandler.obtainMessage();
+                msg.arg1=NEW_ACTIVITY;
+                msg.arg2=TEXT_CLICK_ABL;
+                msg.obj=(Object)jsonObject;
+                mHandler.sendMessage(msg);
+            }
+
+        }
     }
 
     @Override

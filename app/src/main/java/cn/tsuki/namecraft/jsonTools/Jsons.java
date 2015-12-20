@@ -49,7 +49,7 @@ public class Jsons {
 		return jo.toString();
 	}
 	
-	public static JSONArray buildJsonArray(List<Object> array){
+	public static JSONArray buildJsonArray(List<?> array){
 		   JSONArray ja = new JSONArray();
 		   for(int i = 0;i < array.size();i++){
 			   Map<String,String>map = null;

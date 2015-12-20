@@ -9,12 +9,14 @@
 
     <ImageView
         android:id="@+id/MainTitle"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_width="match_parent"
         android:gravity="center"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/namecraft" />
+        android:src="@drawable/namecraft"
+        android:layout_centerInParent="true"
+        android:adjustViewBounds="true"
+        android:maxHeight="200dp"
+        android:maxWidth="500dp"/>
 
     <LinearLayout
         android:id="@+id/Main_editName"
@@ -36,6 +38,42 @@
             android:singleLine="true"
             android:maxLength="20"
             />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+            <TextView
+                android:id="@+id/main_role_1"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="战士"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:layout_margin="10dp" />
+            <TextView
+                android:id="@+id/main_role_2"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="法师"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:layout_margin="10dp" />
+            <TextView
+                android:id="@+id/main_role_3"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="法师"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:layout_margin="10dp" />
+        </LinearLayout>
     </LinearLayout>
 
     <TextView
