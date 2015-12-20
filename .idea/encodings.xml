@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/src/main/java/cn/tsuki/namecraft/MainActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/cn/tsuki/namecraft/clientJson/Allocate.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/cn/tsuki/namecraft/jsonTools/Jsons.java" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

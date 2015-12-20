@@ -21,19 +21,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.lang.Thread;
 import java.lang.Runnable;
 
 import cn.tsuki.namecraft.clientJson.Login;
+import cn.tsuki.namecraft.jsonTools.Jsons;
 import cn.tsuki.namecraft.serverJson.RAllocate;
 import cn.tsuki.namecraft.serverJson.RGetHeroAttribute;
 
@@ -44,6 +48,7 @@ public class MainActivity extends Activity {
     private final int CONNECT_SUCCESS=1;
     private final int CONNECTING=2;
     private final int FIRST_CONNECT=4;
+    private final int GET_MESSAGE=5;
     private Timer timer;
     private TimerTask task;
     Handler mHandler;
@@ -55,8 +60,8 @@ public class MainActivity extends Activity {
     private int login_status;
 
 
-    final private String HOST = "192.168.1.103";
-    final private int PORT = 9002;
+    final private String HOST = "192.168.1.106";
+    final private int PORT = 8888;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,19 +72,8 @@ public class MainActivity extends Activity {
         relayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = ((EditText)findViewById(R.id.Main_edit)).getText().toString();
-                if(login_status==FIRST_CONNECT){
-                    if(name.equals("")){
-                        Toast.makeText(getApplicationContext(), "昵称不能为空",
-                                Toast.LENGTH_SHORT).show();
-                    }else {
-                        getIDPassword thread_getID = new getIDPassword(HOST, PORT, name);
-                        new Thread(thread_getID).start();
-                    }
-                }else{
-                    connectThread thread_connect = new connectThread(HOST,PORT);
-                    new Thread(thread_connect).start();
-                }
+                connectThread thread_connect = new connectThread(HOST,PORT);
+                new Thread(thread_connect).start();
             }
         });
         textTwinkle();
@@ -91,11 +85,12 @@ public class MainActivity extends Activity {
                     case CONNECTING:txtview.setText("正在连接...");relayout.setClickable(false);break;
                     case CONNECT_FAILED:txtview.setText("连接失败,点击屏幕重新连接");relayout.setClickable(true);break;
                     case CONNECT_SUCCESS:txtview.setText("连接成功");if(login_status!=FIRST_CONNECT){startGameActivity((RGetHeroAttribute) msg.obj);}break;
-                    case FIRST_CONNECT:txtview.setText("您是第一次玩这个游戏，请输入您的昵称");
+                    case FIRST_CONNECT:txtview.setText("您是第一次玩这个游戏，请输入您的昵称并选择职业");
                         findViewById(R.id.MainTitle).setVisibility(View.INVISIBLE);
                         //findViewById(R.id.main_layout).clearAnimation();
                         findViewById(R.id.Main_editName).setVisibility(View.VISIBLE);
                         login_status=FIRST_CONNECT;break;
+                    case GET_MESSAGE:txtview.setText("正在获取信息。。。");break;
                     default:break;
                 }
             }
@@ -249,7 +244,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void run() {
-            Message msg = mHandler.obtainMessage();
+
             Login login = new Login();
             SharedPreferences pref = getSharedPreferences("setting", Context.MODE_PRIVATE);
             ID=pref.getString("ID","");
@@ -260,36 +255,100 @@ public class MainActivity extends Activity {
                 login_status=FIRST_CONNECT;
                 login.setFirstLogin(1);
             }else{
+                login.setFirstLogin(0);
                 login.setUserId(ID);
                 login.setUserPassword(password);
             }
 
             Log.v("else","");
             //登录
+
             Socket mSocket =null;
+            Message msg = mHandler.obtainMessage();
             msg.arg1=CONNECTING;
             mHandler.sendMessage(msg);
             try{
                 mSocket=new Socket(host,port);
+                mSocket.setSoTimeout(1000);
             }catch (IOException e){
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                mHandler.sendMessage(msg);
+                //mSocket.close();
+                return;
+            }
+            msg = mHandler.obtainMessage();
+            msg.arg1=CONNECT_SUCCESS;
+            mHandler.sendMessage(msg);
+            //TODO 发送login请求
+            try {
+                ArrayList<Object> alist = new ArrayList<>();
+                alist.add(login);
+                String jsonString = Jsons.buildJson(1, "Login", 1, Jsons.buildJsonArray(alist).toString());
+                Log.d("jsons", jsonString);
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
+                writer.write(jsonString);writer.newLine();
+                writer.flush();
+                //mSocket.shutdownOutput();
+            }catch (JSONException e){
+                e.printStackTrace();
+                Log.v("buildjosn",e.getCause().toString());
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                mHandler.sendMessage(msg);
+                return;
+            }catch (IOException e){
+                e.printStackTrace();
+                Log.v("socketos",e.getCause().toString());
+                msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
                 return;
             }
-            msg.arg1=CONNECT_SUCCESS;
-            mHandler.sendMessage(msg);
-            //TODO 发送login请求
 
 
-            //==========================
 
-            String jsonString=null;
+
+            String recString;
             try{
                 BufferedReader bf =  new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
-                jsonString = bf.readLine();
+                String jsonString = bf.readLine();
+                Log.d("bfr", jsonString);
+                JSONObject jobject = new JSONObject(jsonString);
+                if((jobject.getInt("JsonType")!=5)&&("RLogin".equals(jobject.getInt("ObjectType")))){
+                    throw new JSONException("");
+                }
+                recString=jobject.getString("Content");
             }catch (IOException e){
                 Log.v("bR IOException",e.getCause().toString());
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                mHandler.sendMessage(msg);
+                return;
+            }catch (JSONException e){
+                Toast.makeText(getApplicationContext(), "校验失败", Toast.LENGTH_SHORT).show();
+                return;
+            }finally {
+                try {
+                    mSocket.close();
+                }catch (IOException e){
+                    return;
+                }
             }
+
+            try {
+                JSONObject jobject = new JSONObject(recString);
+                ID = jobject.getString("UserId");
+                password = jobject.getString("UserPassword");
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("ID",ID);
+                editor.putString("password",password);
+                editor.apply();
+            }catch (JSONException e){
+                Toast.makeText(getApplicationContext(), "校验失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
 
 
 
