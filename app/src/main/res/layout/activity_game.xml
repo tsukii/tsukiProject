@@ -220,13 +220,13 @@
     </LinearLayout>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="400dp"
+        android:layout_width="500dp"
         android:layout_height="200dp"
         android:background="@drawable/btnstyle"
         android:layout_gravity="center"
         android:orientation="vertical"
         android:gravity="center"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:id="@+id/game_dialog"
        >
         <TextView
@@ -236,7 +236,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30sp"
-            android:text="@string/connecting"/>
+            android:text="@string/connecting" />
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -244,5 +244,43 @@
             android:divider="@color/black"
             android:dividerHeight="1dp"
             android:id="@+id/game_dialog_listView"></ListView>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/game_dialog_difficult"
+            android:orientation="horizontal"
+            android:visibility="visible">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:text="简单"
+                android:textSize="25sp"
+                android:textColor="@color/gray"
+                android:background="@drawable/btnstyle"
+                android:id="@+id/game_dialog_diffi1"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:text="普通"
+                android:textSize="25sp"
+                android:textColor="@color/gray"
+                android:background="@drawable/btnstyle"
+                android:id="@+id/game_dialog_diffi2"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:text="困难"
+                android:textSize="25sp"
+                android:textColor="@color/gray"
+                android:background="@drawable/btnstyle"
+                android:id="@+id/game_dialog_diffi3"/>
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

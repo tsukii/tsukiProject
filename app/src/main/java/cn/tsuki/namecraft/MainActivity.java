@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -316,7 +317,8 @@ public class MainActivity extends Activity {
             }
 
             try {
-                JSONObject jobject = new JSONObject(recString);
+                JSONArray jsonArray = new JSONArray(recString);
+                JSONObject jobject = jsonArray.getJSONObject(0);
                 if(jobject.getInt("ReturnNum")==0){
                     throw new JSONException("");
                 }
@@ -450,7 +452,8 @@ public class MainActivity extends Activity {
             }
 
             try {
-                JSONObject jobject = new JSONObject(recString);
+                JSONArray jsonArray = new JSONArray(recString);
+                JSONObject jobject = jsonArray.getJSONObject(0);
                 ID = jobject.getString("UserId");
                 password = jobject.getString("UserPassword");
                 SharedPreferences.Editor editor = pref.edit();
@@ -545,7 +548,8 @@ public class MainActivity extends Activity {
                     throw new JSONException("");
                 }
                 recString=jobject.getString("Content");
-                jsonObject = new JSONObject(recString);
+                JSONArray jsonArray = new JSONArray(recString);
+                jsonObject = jsonArray.getJSONObject(0);
             }catch (IOException e){
                 Log.v("bR IOException",e.getCause().toString());
                 msg = mHandler.obtainMessage();

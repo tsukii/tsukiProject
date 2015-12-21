@@ -5,55 +5,46 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:id="@+id/mineinf"
         android:orientation="vertical">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1" />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1"
-                android:text="名字先占好字节"
+                android:text="name"
                 android:id="@+id/pvp_mine_name"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:textSize="20dp"/>
+                android:textSize="15sp"/>
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:text="lv"
-                android:id="@+id/pvp_mine_level"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:textSize="20dp"/>
-            <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text="HP"
                 android:id="@+id/pvp_mine_health"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:textSize="20dp"/>
+                android:textSize="15sp"/>
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1" />
         </LinearLayout>
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="2">
             <LinearLayout
@@ -172,50 +163,42 @@
             android:id="@+id/pvp_listview"></ListView>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:id="@+id/enemyinf"
         android:orientation="vertical">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1" />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1"
-                android:text="名字先占好字节"
+                android:text="name"
                 android:id="@+id/pvp_enemy_name"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:textSize="20dp"/>
+                android:textSize="15sp"/>
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:text="lv"
-                android:id="@+id/pvp_enemy_level"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:textSize="20dp"/>
-            <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text="HP"
                 android:id="@+id/pvp_enemy_health"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:textSize="20dp"/>
+                android:textSize="15sp"/>
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1" />
         </LinearLayout>
@@ -282,7 +265,7 @@
                     android:layout_height="0dip"
                     android:layout_weight="1"
                     android:layout_margin="5dp"
-                    android:text="100"
+                    android:text="@string/unknown"
                     android:textSize="20sp"
                     android:id="@+id/pvp_enemy_str"/>
                 <TextView
@@ -290,7 +273,7 @@
                     android:layout_height="0dip"
                     android:layout_weight="1"
                     android:layout_margin="5dp"
-                    android:text="100"
+                    android:text="@string/unknown"
                     android:textSize="20sp"
                     android:id="@+id/pvp_enemy_int"/>
                 <TextView
@@ -298,7 +281,7 @@
                     android:layout_height="0dip"
                     android:layout_weight="1"
                     android:layout_margin="5dp"
-                    android:text="100"
+                    android:text="@string/unknown"
                     android:textSize="20sp"
                     android:id="@+id/pvp_enemy_agi"/>
                 <TextView
@@ -306,7 +289,7 @@
                     android:layout_height="0dip"
                     android:layout_weight="1"
                     android:layout_margin="5dp"
-                    android:text="100"
+                    android:text="@string/unknown"
                     android:textSize="20sp"
                     android:id="@+id/pvp_enemy_luc"/>
                 <TextView
@@ -314,7 +297,7 @@
                     android:layout_height="0dip"
                     android:layout_weight="1"
                     android:layout_margin="5dp"
-                    android:text="100"
+                    android:text="@string/unknown"
                     android:textSize="20sp"
                     android:id="@+id/pvp_enemy_atk"/>
                 <TextView
@@ -322,7 +305,7 @@
                     android:layout_height="0dip"
                     android:layout_weight="1"
                     android:layout_margin="5dp"
-                    android:text="100"
+                    android:text="@string/unknown"
                     android:textSize="20sp"
                     android:id="@+id/pvp_enemy_def"/>
             </LinearLayout>

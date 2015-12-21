@@ -1,13 +1,13 @@
 package cn.tsuki.namecraft.clientJson;
 
 public class PVE {
-	public String Difficulty;
+	public int Difficulty;
 	public String UserID;
 	
-	public String getDifficulty() {
+	public int getDifficulty() {
 		return Difficulty;
 	}
-	public void setDifficulty(String difficulty) {
+	public void setDifficulty(int difficulty) {
 		Difficulty = difficulty;
 	}
 	public String getUserID() {
@@ -16,7 +16,7 @@ public class PVE {
 	public void setUserID(String userID) {
 		UserID = userID;
 	}
-	public PVE(String difficulty, String userID) {
+	public PVE(int difficulty, String userID) {
 		super();
 		Difficulty = difficulty;
 		UserID = userID;

@@ -34,9 +34,9 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="昵称不要太长哦                      "
+            android:hint="昵称不要太长哦"
             android:singleLine="true"
-            android:maxLength="20"
+            android:maxLength="10"
             />
         <LinearLayout
             android:layout_width="wrap_content"

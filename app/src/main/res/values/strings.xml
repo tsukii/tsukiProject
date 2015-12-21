@@ -22,4 +22,10 @@
 
     <string name="confirm">确定</string>
     <string name="ret">取消</string>
+
+    <string name="easy">简单</string>
+    <string name="normal">普通</string>
+    <string name="difficult">困难</string>
+
+    <string name="unknown">未知</string>
 </resources>

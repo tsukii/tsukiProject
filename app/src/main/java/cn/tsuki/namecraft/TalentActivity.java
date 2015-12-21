@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -344,7 +345,8 @@ public class TalentActivity extends Activity{
                     throw new JSONException("");
                 }
                 String recString=jobject.getString("Content");
-                JSONObject jsonObject = new JSONObject(recString);
+                JSONArray jsonArray = new JSONArray(recString);
+                JSONObject jsonObject = jsonArray.getJSONObject(0);
                 if(jsonObject.getInt("ReturnNum")==0){
                     throw new JSONException("");
                 }
@@ -389,7 +391,8 @@ public class TalentActivity extends Activity{
                     throw new JSONException("");
                 }
                 String recString=jobject.getString("Content");
-                jsonObject = new JSONObject(recString);
+                JSONArray jsonArray = new JSONArray(recString);
+                jsonObject = jsonArray.getJSONObject(0);
             }catch (IOException e){
                 Log.v("bR IOException",e.getCause().toString());
                 msg = mHandler.obtainMessage();
