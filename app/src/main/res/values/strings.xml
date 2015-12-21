@@ -19,4 +19,7 @@
     <string name="connecting">正在连接</string>
     <string name="connect_failed">连接失败</string>
     <string name="connect_success">连接成功</string>
+
+    <string name="confirm">确定</string>
+    <string name="ret">取消</string>
 </resources>

@@ -1,7 +1,7 @@
 package cn.tsuki.namecraft.serverJson;
 
 public class RAllocate {
-	public int ReturnNum;/*0,1*/
+	public int ReturnNum;/*0失败,1正常*/
 
 	public RAllocate(int returnNum) {
 		super();

@@ -14,7 +14,7 @@
             android:gravity="center"
             android:background="#000000">
             <TextView
-                android:id="@+id/name"
+                android:id="@+id/talent_name"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:text="@string/userid"
@@ -27,7 +27,7 @@
                 />
 
             <TextView
-                android:id="@+id/experience"
+                android:id="@+id/talent_experience"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:text="@string/exp"
@@ -40,6 +40,15 @@
 
         </TableRow>
     </TableLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/connecting"
+        android:textSize="30sp"
+        android:layout_centerInParent="true"
+        android:id="@+id/talent_connect"
+        android:visibility="gone"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -72,9 +81,20 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/talent_confirm"
-                android:text="确定"
+                android:text="@string/confirm"
                 android:background="@drawable/btnstyle"
                 android:textSize="20sp"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/talent_return"
+                android:text="@string/ret"
+                android:background="@drawable/btnstyle"
+                android:textSize="20sp"
+                android:layout_toRightOf="@+id/talent_confirm"
+                android:layout_marginLeft="10dp"
                 />
         </RelativeLayout>
     </RelativeLayout>
@@ -82,7 +102,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/topTablelayout"
-        android:layout_above="@+id/bottomRlayout">
+        android:layout_above="@+id/bottomRlayout"
+        android:id="@+id/talent_mid_layout">
         <LinearLayout
             android:id="@+id/centerLinearlayout"
             android:layout_width="wrap_content"
@@ -95,42 +116,32 @@
                 android:layout_weight="1"
                 android:text=" - > "
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text=" - > "
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text=" - > "
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text=" - > "
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:text=" - > "
-                android:textSize="25sp"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:text=" - > "
-                android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -145,7 +156,8 @@
                 android:id="@+id/strBeforeChanged"
                 android:text="100"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
@@ -153,7 +165,8 @@
                 android:id="@+id/intBeforeChanged"
                 android:text="100"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
@@ -161,7 +174,8 @@
                 android:id="@+id/agiBeforeChanged"
                 android:text="100"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
@@ -169,23 +183,8 @@
                 android:id="@+id/lucBeforeChanged"
                 android:text="100"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:id="@+id/atkBeforeChanged"
-                android:text="100"
-                android:textSize="25sp"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:id="@+id/defBeforeChanged"
-                android:text="100"
-                android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -198,42 +197,32 @@
                 android:layout_weight="1"
                 android:text="@string/str"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text="@string/intel"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text="@string/agi"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text="@string/luc"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:text="@string/atk"
-                android:textSize="25sp"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:text="@string/def"
-                android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -248,7 +237,8 @@
                 android:id="@+id/strAfterChanged"
                 android:text="100"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
@@ -256,7 +246,8 @@
                 android:id="@+id/intAfterChanged"
                 android:text="100"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
@@ -264,7 +255,8 @@
                 android:id="@+id/agiAfterChanged"
                 android:text="100"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
@@ -272,23 +264,8 @@
                 android:id="@+id/lucAfterChanged"
                 android:text="100"
                 android:textSize="25sp"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:id="@+id/atkAfterChanged"
-                android:text="100"
-                android:textSize="25sp"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:id="@+id/defAfterChanged"
-                android:text="100"
-                android:textSize="25sp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -301,7 +278,8 @@
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:id="@+id/decreasebtn1"
-                android:background="@drawable/btnstyle"
+                android:background="@color/white"
+                android:textSize="25sp"
                 android:text="—"
                 android:layout_margin="5dp"/>
             <Button
@@ -309,7 +287,8 @@
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:id="@+id/decreasebtn2"
-                android:background="@drawable/btnstyle"
+                android:background="@color/white"
+                android:textSize="25sp"
                 android:text="—"
                 android:layout_margin="5dp"/>
             <Button
@@ -317,7 +296,8 @@
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:id="@+id/decreasebtn3"
-                android:background="@drawable/btnstyle"
+                android:background="@color/white"
+                android:textSize="25sp"
                 android:text="—"
                 android:layout_margin="5dp"/>
             <Button
@@ -325,23 +305,8 @@
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:id="@+id/decreasebtn4"
-                android:background="@drawable/btnstyle"
-                android:text="—"
-                android:layout_margin="5dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:id="@+id/decreasebtn5"
-                android:background="@drawable/btnstyle"
-                android:text="—"
-                android:layout_margin="5dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:id="@+id/decreasebtn6"
-                android:background="@drawable/btnstyle"
+                android:background="@color/white"
+                android:textSize="25sp"
                 android:text="—"
                 android:layout_margin="5dp"/>
         </LinearLayout>
@@ -356,15 +321,18 @@
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:id="@+id/increasebtn1"
-                android:background="@drawable/btnstyle"
+                android:background="@color/white"
+                android:textSize="25sp"
                 android:text="+"
+
                 android:layout_margin="5dp"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:id="@+id/increasebtn2"
-                android:background="@drawable/btnstyle"
+                android:background="@color/white"
+                android:textSize="25sp"
                 android:text="+"
                 android:layout_margin="5dp"/>
             <Button
@@ -372,7 +340,8 @@
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:id="@+id/increasebtn3"
-                android:background="@drawable/btnstyle"
+                android:background="@color/white"
+                android:textSize="25sp"
                 android:text="+"
                 android:layout_margin="5dp"/>
             <Button
@@ -380,24 +349,9 @@
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:id="@+id/increasebtn4"
-                android:background="@drawable/btnstyle"
+                android:background="@color/white"
+                android:textSize="25sp"
                 android:text="+"
-                android:layout_margin="5dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:id="@+id/increasebtn5"
-                android:background="@drawable/btnstyle"
-                android:text="+"
-                android:layout_margin="5dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:id="@+id/increasebtn6"
-                android:background="@drawable/btnstyle"
-                android:text="+" 
                 android:layout_margin="5dp"/>
         </LinearLayout>
     </RelativeLayout>

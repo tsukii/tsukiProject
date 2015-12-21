@@ -131,6 +131,7 @@ public class MainActivity extends Activity {
                     new Thread(thread_connect).start();
                 }
 
+
             }
         });
         textTwinkle();
@@ -203,13 +204,13 @@ public class MainActivity extends Activity {
             mBundle.putInt("type", gameinfo.getInt("HeroType"));
             mBundle.putInt("lv", gameinfo.getInt("Level"));
             mBundle.putInt("exp",gameinfo.getInt("Exp"));
-            mBundle.putInt("str",gameinfo.getInt("Power"));
-            mBundle.putInt("intel",gameinfo.getInt("Intel"));
-            mBundle.putInt("agi",gameinfo.getInt("Agi"));
-            mBundle.putInt("luc",gameinfo.getInt("Lucky"));
-            mBundle.putInt("atk",gameinfo.getInt("Atk"));
-            mBundle.putInt("def",gameinfo.getInt("Defense"));
-            mBundle.putInt("hp",gameinfo.getInt("Hp"));
+            mBundle.putInt("Power",gameinfo.getInt("Power"));
+            mBundle.putInt("Intel",gameinfo.getInt("Intel"));
+            mBundle.putInt("Agi",gameinfo.getInt("Agi"));
+            mBundle.putInt("Lucky",gameinfo.getInt("Lucky"));
+            mBundle.putInt("Atk",gameinfo.getInt("Atk"));
+            mBundle.putInt("Defense",gameinfo.getInt("Defense"));
+            mBundle.putInt("HP",gameinfo.getInt("Hp"));
             mBundle.putInt("AbiliAvailable",gameinfo.getInt("AbiliAvailable"));
             mBundle.putInt("AttriAvailable", gameinfo.getInt("AttriAvailable"));
             mBundle.putInt("AbilityLevel1",gameinfo.getInt("AbilityLevel1"));

@@ -36,7 +36,7 @@
             android:textSize="20sp"
             android:text="@string/about"
             android:gravity="center"
-            android:id="@+id/game_rec"/>
+            android:id="@+id/game_about"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -115,7 +115,11 @@
             android:layout_height="match_parent"
             android:id="@+id/Rightframe"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -158,6 +162,60 @@
                 android:gravity="center_vertical"
                 android:text="@string/def"
                 android:layout_margin="5dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:layout_margin="5dp"
+                    android:id="@+id/game_power"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:layout_margin="5dp"
+                    android:id="@+id/game_intel"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:layout_margin="5dp"
+                    android:id="@+id/game_agi"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:layout_margin="5dp"
+                    android:id="@+id/game_lucky"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:layout_margin="5dp"
+                    android:id="@+id/game_atk"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:layout_margin="5dp"
+                    android:id="@+id/game_defense"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
     </LinearLayout>
@@ -169,9 +227,10 @@
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="invisible"
+        android:id="@+id/game_dialog"
        >
         <TextView
-            android:id="@+id/game_dialog"
+            android:id="@+id/game_dialog_txt"
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_width="wrap_content"
@@ -183,6 +242,7 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             android:divider="@color/black"
-            android:dividerHeight="1dp"></ListView>
+            android:dividerHeight="1dp"
+            android:id="@+id/game_dialog_listView"></ListView>
     </LinearLayout>
 </FrameLayout>
