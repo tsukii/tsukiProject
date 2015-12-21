@@ -92,7 +92,9 @@ public class GameActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Intent in =new Intent(GameActivity.this,AbilityActivity.class);
+                        in.putExtras(mainBundle);
+                        startNewActivity(in);
                     }
                 }
         );
