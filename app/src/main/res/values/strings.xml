@@ -23,9 +23,29 @@
     <string name="confirm">确定</string>
     <string name="ret">取消</string>
 
+    <string name="close">关闭</string>
+    
     <string name="easy">简单</string>
     <string name="normal">普通</string>
     <string name="difficult">困难</string>
 
     <string name="unknown">未知</string>
+
+
+    <string name="Ab1_1_txt">造成一定量的暴击伤害</string>
+    <string name="Ab1_2_txt">吸取一定百分比的伤害作为血量</string>
+    <string name="Ab2_1_txt">无视敌方部分护甲</string>
+    <string name="Ab2_2_txt">将本次即将造成伤害值的一部分转换为治疗量</string>
+    <string name="Ab3_1_txt">法术攻击</string>
+    <string name="Ab3_2_txt">大幅回复己方血量</string>
+
+    <string name="Ab1_1">昆仑震</string>
+    <string name="Ab1_2">嗜血</string>
+    <string name="Ab2_1">潜行</string>
+    <string name="Ab2_2">双生匕首</string>
+    <string name="Ab3_1">火球术</string>
+    <string name="Ab3_2">清心术</string>
+
+
+    <string name="contract_us">联系我们\n583288152@qq.com\n409082492@qq.com</string>
 </resources>

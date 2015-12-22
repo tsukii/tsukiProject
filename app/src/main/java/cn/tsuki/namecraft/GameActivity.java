@@ -197,6 +197,20 @@ public class GameActivity extends Activity {
                 }
         );
 
+        ((TextView)findViewById(R.id.game_about)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((LinearLayout) findViewById(R.id.game_about_layout)).setVisibility(View.VISIBLE);
+            }
+        });
+
+        ((Button)findViewById(R.id.game_about_layout_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((LinearLayout) findViewById(R.id.game_about_layout)).setVisibility(View.GONE);
+            }
+        });
+
         dialog_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
