@@ -87,14 +87,14 @@ public class AbilityActivity extends Activity {
             Ability_info_1.setText(Ab_txt_1+"\n"+Ability_1);
             Ability_txt_1.setText(R.string.Ab1_1_txt);
             if(Ability_1<5) {
-                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.Ab1_1_1));
+                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab1_1_1));
             }else{
-                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.Ab1_1_2));
+                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab1_1_2));
             }
             Ability_2 = mBundle.getInt("AbilityLevel2");
             Ability_info_2.setText(Ab_txt_2+"\n"+Ability_2);
             Ability_txt_2.setText(R.string.Ab1_2_txt);
-            Ability_img_2.setImageDrawable(getResources().getDrawable(R.drawable.Ab1_2));
+            Ability_img_2.setImageDrawable(getResources().getDrawable(R.drawable.ab1_2));
 
         }else if(HeroType==2){
             Ab_txt_1 = getResources().getString(R.string.Ab1_1);
@@ -103,14 +103,14 @@ public class AbilityActivity extends Activity {
             Ability_info_1.setText(Ab_txt_1+"\n"+Ability_1);
             Ability_txt_1.setText(R.string.Ab2_1_txt);
             if(Ability_1<5) {
-                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.Ab2_1_1));
+                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab2_1_1));
             }else{
-                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.Ab2_1_2));
+                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab2_1_2));
             }
             Ability_2 = mBundle.getInt("AbilityLevel4");
             Ability_info_2.setText(Ab_txt_2+"\n"+Ability_2);
             Ability_txt_2.setText(R.string.Ab2_2_txt);
-            Ability_img_2.setImageDrawable(getResources().getDrawable(R.drawable.Ab2_2));
+            Ability_img_2.setImageDrawable(getResources().getDrawable(R.drawable.ab2_2));
 
         }else{
             Ab_txt_1 = getResources().getString(R.string.Ab1_1);
@@ -119,14 +119,14 @@ public class AbilityActivity extends Activity {
             Ability_info_1.setText(Ab_txt_1+"\n"+Ability_1);
             Ability_txt_1.setText(R.string.Ab3_1_txt);
             if(Ability_1<5) {
-                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.Ab3_1_1));
+                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab3_1_1));
             }else{
-                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.Ab3_1_2));
+                Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab3_1_2));
             }
             Ability_2 = mBundle.getInt("AbilityLevel6");
             Ability_info_2.setText(Ab_txt_2+"\n"+Ability_2);
             Ability_txt_2.setText(R.string.Ab3_2_txt);
-            Ability_img_2.setImageDrawable(getResources().getDrawable(R.drawable.Ab3_2));
+            Ability_img_2.setImageDrawable(getResources().getDrawable(R.drawable.ab3_2));
 
         }
 
