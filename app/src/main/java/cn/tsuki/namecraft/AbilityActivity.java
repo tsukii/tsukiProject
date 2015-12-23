@@ -35,8 +35,8 @@ import cn.tsuki.namecraft.jsonTools.Jsons;
 public class AbilityActivity extends Activity {
 
 
-    final private String HOST = "192.168.1.106";
-    final private int PORT = 8888;
+    final private String HOST = HOSTInfo.HOST;
+    final private int PORT = HOSTInfo.PORT;
 
     private final int CONNECTING=1;
     private final int CONNECT_FAILED=2;
@@ -72,6 +72,10 @@ public class AbilityActivity extends Activity {
         AbiliAvailable = mBundle.getInt("AbiliAvailable");
         HeroType = mBundle.getInt("type");
 
+        ((TextView)findViewById(R.id.ability_name)).setText(mBundle.getString("Name"));
+        ((TextView)findViewById(R.id.ability_exp)).setText("lv." + mBundle.getInt("lv") + " " + mBundle.getInt("exp"));
+
+
         Ability_img_1 = (ImageView)findViewById(R.id.Ability_1_img);
         Ability_img_2 = (ImageView)findViewById(R.id.Ability_2_img);
 
@@ -79,6 +83,9 @@ public class AbilityActivity extends Activity {
         Ability_info_2 = (TextView)findViewById(R.id.Ability_2_lv);
         Ability_txt_1 = (TextView)findViewById(R.id.Ability_1_txt);
         Ability_txt_2 = (TextView)findViewById(R.id.Ability_2_txt);
+
+        AbiliAvailable_txt = (TextView)findViewById(R.id.Ab_remainTalent);
+        AbiliAvailable_txt.setText(""+AbiliAvailable);
 
         if(HeroType==1){
             Ab_txt_1 = getResources().getString(R.string.Ab1_1);
@@ -97,8 +104,8 @@ public class AbilityActivity extends Activity {
             Ability_img_2.setImageDrawable(getResources().getDrawable(R.drawable.ab1_2));
 
         }else if(HeroType==2){
-            Ab_txt_1 = getResources().getString(R.string.Ab1_1);
-            Ab_txt_2 = getResources().getString(R.string.Ab1_2);
+            Ab_txt_1 = getResources().getString(R.string.Ab2_1);
+            Ab_txt_2 = getResources().getString(R.string.Ab2_2);
             Ability_1 = mBundle.getInt("AbilityLevel3");
             Ability_info_1.setText(Ab_txt_1+"\n"+Ability_1);
             Ability_txt_1.setText(R.string.Ab2_1_txt);
@@ -113,8 +120,8 @@ public class AbilityActivity extends Activity {
             Ability_img_2.setImageDrawable(getResources().getDrawable(R.drawable.ab2_2));
 
         }else{
-            Ab_txt_1 = getResources().getString(R.string.Ab1_1);
-            Ab_txt_2 = getResources().getString(R.string.Ab1_2);
+            Ab_txt_1 = getResources().getString(R.string.Ab3_1);
+            Ab_txt_2 = getResources().getString(R.string.Ab3_2);
             Ability_1 = mBundle.getInt("AbilityLevel5");
             Ability_info_1.setText(Ab_txt_1+"\n"+Ability_1);
             Ability_txt_1.setText(R.string.Ab3_1_txt);
@@ -137,6 +144,16 @@ public class AbilityActivity extends Activity {
                     Ability_1++;
                     AbiliAvailable--;
                     Ability_info_1.setText(Ab_txt_1+"\n"+Ability_1);
+                    AbiliAvailable_txt.setText(""+AbiliAvailable);
+                    if(Ability_1==5) {
+                        if (HeroType == 1) {
+                            Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab1_1_2));
+                        } else if (HeroType == 2) {
+                            Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab2_1_2));
+                        } else {
+                            Ability_img_1.setImageDrawable(getResources().getDrawable(R.drawable.ab3_1_2));
+                        }
+                    }
                 }
             }
         });
@@ -147,7 +164,8 @@ public class AbilityActivity extends Activity {
                 if(AbiliAvailable>0){
                     Ability_2++;
                     AbiliAvailable--;
-                    Ability_info_2.setText(Ab_txt_1+"\n"+Ability_2);
+                    Ability_info_2.setText(Ab_txt_2+"\n"+Ability_2);
+                    AbiliAvailable_txt.setText(""+AbiliAvailable);
                 }
             }
         });
@@ -168,10 +186,10 @@ public class AbilityActivity extends Activity {
                 }
                 confirmThread  confirmTh = new confirmThread(mBundle.getString("ID")
                         ,mBundle.getInt("AttriAvailable")
-                        ,mBundle.getInt("afPower")
-                        ,mBundle.getInt("afIntel")
-                        ,mBundle.getInt("afAgi")
-                        ,mBundle.getInt("afLucky")
+                        ,mBundle.getInt("Power")
+                        ,mBundle.getInt("Intel")
+                        ,mBundle.getInt("Agi")
+                        ,mBundle.getInt("Lucky")
                         ,AbiliAvailable
                         ,a1
                         ,a2
@@ -198,12 +216,12 @@ public class AbilityActivity extends Activity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.arg1){
-                    case CONNECTING:findViewById(R.id.bottomRlayout).setVisibility(View.GONE);
-                        findViewById(R.id.talent_mid_layout).setVisibility(View.GONE);
-                        findViewById(R.id.talent_connect).setVisibility(View.VISIBLE);break;
+                    case CONNECTING:findViewById(R.id.Ab_bottomRlayout).setVisibility(View.GONE);
+                        findViewById(R.id.Ab_mid_layout).setVisibility(View.GONE);
+                        findViewById(R.id.ability_connect).setVisibility(View.VISIBLE);break;
                     case CONNECT_SUCCESS:startGameActivity((JSONObject)msg.obj);break;
                     case CONNECT_FAILED:
-                        ((TextView)findViewById(R.id.talent_connect)).setText("连接失败，即将重启应用");
+                        ((TextView)findViewById(R.id.ability_connect)).setText("连接失败，即将重启应用");
                         Intent in =new Intent(AbilityActivity.this,LaunchActivity.class);
                         startActivity(in);
                         finish();
@@ -305,7 +323,7 @@ public class AbilityActivity extends Activity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=1)&&("RAllocate".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=1)){
                     throw new JSONException("");
                 }
                 String recString=jobject.getString("Content");
@@ -315,7 +333,7 @@ public class AbilityActivity extends Activity {
                     throw new JSONException("");
                 }
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                Log.v("bR IOException","");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
@@ -351,14 +369,14 @@ public class AbilityActivity extends Activity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=3)&&("RGetHeroAttribute".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=3)){
                     throw new JSONException("");
                 }
                 String recString=jobject.getString("Content");
                 JSONArray jsonArray = new JSONArray(recString);
                 jsonObject = jsonArray.getJSONObject(0);
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                Log.v("bR IOException","");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);

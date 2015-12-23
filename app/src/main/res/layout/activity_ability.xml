@@ -104,6 +104,7 @@
         android:layout_above="@+id/Ab_bottomRlayout"
         android:layout_below="@+id/ability_top"
         android:orientation="vertical"
+        android:id="@+id/Ab_mid_layout"
         >
         <LinearLayout
             android:layout_width="match_parent"

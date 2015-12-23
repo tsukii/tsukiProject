@@ -9,7 +9,6 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  *
  * 1:将JavaBean转换成Map、JSONObject
@@ -29,32 +28,32 @@ public class JsonTools {
      * @return Map对象
      */
     public static Map toMap(Object javaBean) {
-    	 Map result = new HashMap();
-    	 for(Class cls = javaBean.getClass();cls != Object.class;cls = cls.getSuperclass()){
-       
-        Method[] methods = cls.getDeclaredMethods();
+        Map result = new HashMap();
+        for(Class cls = javaBean.getClass();cls != Object.class;cls = cls.getSuperclass()){
 
-        for (Method method : methods) {
+            Method[] methods = cls.getDeclaredMethods();
 
-            try {
+            for (Method method : methods) {
 
-                if (method.getName().startsWith("get")) {
+                try {
 
-                    String field = method.getName();
-                    field = field.substring(field.indexOf("get") + 3);
-                    field = field.toLowerCase().charAt(0) + field.substring(1);
+                    if (method.getName().startsWith("get")) {
 
-                    Object value = method.invoke(javaBean, (Object[]) null);
-                    result.put(field, null == value ? "" : value.toString());
+                        String field = method.getName();
+                        field = field.substring(field.indexOf("get") + 3);
+                        //field = field.toLowerCase().charAt(0) + field.substring(1);
+                        field = field.charAt(0) + field.substring(1);
+                        Object value = method.invoke(javaBean, (Object[]) null);
+                        result.put(field, null == value ? "" : value.toString());
 
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-
         }
-    	}
         return result;
 
     }
@@ -70,12 +69,12 @@ public class JsonTools {
     public static Map toMap(String jsonString) throws JSONException {
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        
+
         Map result = new HashMap();
         Iterator iterator = jsonObject.keys();
         String key = null;
         String value = null;
-        
+
         while (iterator.hasNext()) {
 
             key = (String) iterator.next();
@@ -86,7 +85,6 @@ public class JsonTools {
         return result;
 
     }
-
 
     /**
      * 将JavaBean转换成JSONObject（通过Map中转）
@@ -110,29 +108,29 @@ public class JsonTools {
      *            Map数据
      */
     public static Object toJavaBean(Object javabean, Map data) {
-    	
-    	for(Class cls = javabean.getClass();cls != Object.class;cls = cls.getSuperclass()){
-        Method[] methods = cls.getDeclaredMethods();
-        for (Method method : methods) {
 
-            try {
-                if (method.getName().startsWith("set")) {
+        for(Class cls = javabean.getClass();cls != Object.class;cls = cls.getSuperclass()){
+            Method[] methods = cls.getDeclaredMethods();
+            for (Method method : methods) {
 
-                    String field = method.getName();
-                    field = field.substring(field.indexOf("set") + 3);
-                    field = field.toLowerCase().charAt(0) + field.substring(1);
-                    method.invoke(javabean, new Object[] {
+                try {
+                    if (method.getName().startsWith("set")) {
 
-                    data.get(field)
+                        String field = method.getName();
+                        field = field.substring(field.indexOf("set") + 3);
+                        field = field.toLowerCase().charAt(0) + field.substring(1);
+                        method.invoke(javabean, new Object[] {
 
-                    });
+                                data.get(field)
 
+                        });
+
+                    }
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
-            }
 
+            }
         }
-    	}
         return javabean;
 
     }
@@ -151,9 +149,9 @@ public class JsonTools {
             throws ParseException, JSONException {
 
         JSONObject jsonObject = new JSONObject(jsonString);
-    
+
         Map map = toMap(jsonObject.toString());
-        
+
         toJavaBean(javabean, map);
 
     }

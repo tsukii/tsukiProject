@@ -49,7 +49,7 @@ public class RPVE {
 		Damage = damage;
 	}
 
-	public boolean isIsMiss() {
+	public boolean getIsMiss() {
 		return IsMiss;
 	}
 
@@ -101,5 +101,21 @@ public class RPVE {
 		AbDamage = abDamage;
 		AbCure = abCure;
 		this.exp = exp;
+	}
+
+	public int getHPA() {
+		return HPA;
+	}
+
+	public void setHPA(int HPA) {
+		this.HPA = HPA;
+	}
+
+	public int getHPD() {
+		return HPD;
+	}
+
+	public void setHPD(int HPD) {
+		this.HPD = HPD;
 	}
 }

@@ -1,5 +1,6 @@
 package cn.tsuki.namecraft;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -36,11 +37,11 @@ import cn.tsuki.namecraft.clientJson.GetHeroAttribute;
 import cn.tsuki.namecraft.jsonTools.Jsons;
 
 
-public class PVPactivity extends ActionBarActivity {
+public class PVPactivity extends Activity {
 
 
-    private final String HOST="";
-    private final int PORT=8888;
+    final private String HOST = HOSTInfo.HOST;
+    final private int PORT = HOSTInfo.PORT;
 
     private final int APPEND=1;
     private final int ACCOMPLISHED=2;
@@ -73,6 +74,8 @@ public class PVPactivity extends ActionBarActivity {
 
 
     private int heroType=0;
+    private String Ability_name[]={"昆仑震","嗜血","潜行","双生匕首","火球术","清心术"};
+
 
     private SimpleAdapter simpleAdapter;
     List<Map<String,Object>> listItems ;
@@ -85,6 +88,7 @@ public class PVPactivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pvp);
         mBundle=getIntent().getExtras();
+        Log.v("jsonarray",mBundle.getString("fight"));
         try {
             jsonArray = new JSONArray(mBundle.getString("fight"));
             JSONObject jsonObject = jsonArray.getJSONObject(0);
@@ -93,18 +97,20 @@ public class PVPactivity extends ActionBarActivity {
             mTotHP=mNowHP=jsonObject.getInt("HPA");
             enemyTotHP=enemyNowHP=jsonObject.getInt("HPD");
             roundCount = jsonArray.length();
+            Log.v("aaaaa",""+roundCount);
         }catch (JSONException e){
-
+            Log.v("expc","aaa");
+            e.printStackTrace();
         }
 
 
         heroType = mBundle.getInt("type");
-        ((TextView) findViewById(R.id.pvp_mine_agi)).setText(mBundle.getInt("Agi"));
-        ((TextView)findViewById(R.id.pvp_mine_atk)).setText(mBundle.getInt("Atk"));
-        ((TextView)findViewById(R.id.pvp_mine_str)).setText(mBundle.getInt("Power"));
-        ((TextView)findViewById(R.id.pvp_mine_int)).setText(mBundle.getInt("Intel"));
-        ((TextView)findViewById(R.id.pvp_mine_luc)).setText(mBundle.getInt("Lucky"));
-        ((TextView)findViewById(R.id.pvp_mine_def)).setText(mBundle.getInt("Defense"));
+        ((TextView) findViewById(R.id.pvp_mine_agi)).setText(""+mBundle.getInt("Agi"));
+        ((TextView)findViewById(R.id.pvp_mine_atk)).setText(""+mBundle.getInt("Atk"));
+        ((TextView)findViewById(R.id.pvp_mine_str)).setText(""+mBundle.getInt("Power"));
+        ((TextView)findViewById(R.id.pvp_mine_int)).setText(""+mBundle.getInt("Intel"));
+        ((TextView)findViewById(R.id.pvp_mine_luc)).setText(""+mBundle.getInt("Lucky"));
+        ((TextView)findViewById(R.id.pvp_mine_def)).setText(""+mBundle.getInt("Defense"));
 
         listView = (ListView)findViewById(R.id.pvp_listview);
         mName = (TextView)findViewById(R.id.pvp_mine_name);
@@ -127,7 +133,7 @@ public class PVPactivity extends ActionBarActivity {
                     case APPEND:appendListView(msg.arg2);break;
                     case ACCOMPLISHED:
                         timerTaskCancel();
-                        getAttiThread getAttiThread = new getAttiThread(HOST,PORT,mBundle.getString("ID"));
+                        getAttiThread getAttiThread = new getAttiThread(HOST,PORT);
                         new Thread(getAttiThread).start();
                         break;
                     case CONNECT_FAILED:Toast.makeText(getApplicationContext(),"连接失败，请重新启动应用",Toast.LENGTH_SHORT).show();
@@ -139,7 +145,7 @@ public class PVPactivity extends ActionBarActivity {
                 }
             }
         };
-
+        fight();
     }
 
     private void startNewActivity(Intent in){
@@ -183,7 +189,7 @@ public class PVPactivity extends ActionBarActivity {
     private void setListView(){
         listItems = new ArrayList<Map<String,Object>>();
         Map<String,Object> listitem = new HashMap<String, Object>();
-        listitem.put("fight_pro",mName+"对"+enemyName+"发起了挑战");
+        listitem.put("fight_pro",mName.getText()+"对"+enemyName.getText()+"发起了挑战");
         listItems.add(listitem);
         simpleAdapter = new SimpleAdapter(PVPactivity.this,listItems,R.layout.pvp_list_item
                 ,new String[]{"fight_pro"},
@@ -211,6 +217,7 @@ public class PVPactivity extends ActionBarActivity {
         JSONObject jsonObject=null;
         try {
             jsonObject = jsonArray.getJSONObject(round);
+            Log.v("jsonObject",jsonObject.toString());
             AttackID = jsonObject.getString("AttackID");
             DefenseID = jsonObject.getString("DefenseID");
             Damage = jsonObject.getInt("Damage");
@@ -239,7 +246,7 @@ public class PVPactivity extends ActionBarActivity {
                 txt_Fight+=(",造成了"+Damage+"点伤害");
             }
         }else{
-            txt_Fight = AttackID + "发动技能，对" + DefenseID + "造成了"+AbDamage+"点伤害";
+            txt_Fight = AttackID + "发动技能"+Ability_name[AbIndex]+"，对" + DefenseID + "造成了"+AbDamage+"点伤害";
             if(AbCure>0){
                 txt_Fight+=(",回复生命值"+AbCure+"点");
             }
@@ -249,12 +256,13 @@ public class PVPactivity extends ActionBarActivity {
             txt_Fight+=("\n"+AttackID+"获得胜利！");
         }
 
-
+        Log.v("fp", txt_Fight);
 
 
         Map<String,Object> listitem = new HashMap<String, Object>();
-        listitem.put("fight_pro",txt_Fight);
+        listitem.put("fight_pro", txt_Fight);
         listItems.add(listitem);
+        //listView.setAdapter(simpleAdapter);
         simpleAdapter.notifyDataSetChanged();
 
     }
@@ -264,27 +272,23 @@ public class PVPactivity extends ActionBarActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(nowRound<roundCount){
-                            Message msg = mHandler.obtainMessage();
-                            msg.arg1=APPEND;
-                            msg.arg2=nowRound;
-                            mHandler.sendMessage(msg);
-                            nowRound++;
-                        }else{
-                            try {
-                                Thread.sleep(3000);
-                            }catch (InterruptedException e){
+                if(nowRound<roundCount){
+                    Log.v("fightr",""+roundCount);
+                    Message msg = mHandler.obtainMessage();
+                    msg.arg1=APPEND;
+                    msg.arg2=nowRound;
+                    mHandler.sendMessage(msg);
+                    nowRound++;
+                }else{
+                    try {
+                        Thread.sleep(3000);
+                    }catch (InterruptedException e){
 
-                            }
-                            Message msg = mHandler.obtainMessage();
-                            msg.arg1=ACCOMPLISHED;
-                            mHandler.sendMessage(msg);
-                        }
                     }
-                });
+                    Message msg = mHandler.obtainMessage();
+                    msg.arg1=ACCOMPLISHED;
+                    mHandler.sendMessage(msg);
+                }
             }
         };
 
@@ -310,10 +314,10 @@ public class PVPactivity extends ActionBarActivity {
         private String host;
         private int port;
 
-        public  getAttiThread(String host,int port,String ID){
+        public  getAttiThread(String host,int port){
             this.host=host;
             this.port=port;
-            this.ID=ID;
+            this.ID=getSharedPreferences("setting", Context.MODE_PRIVATE).getString("ID", "");
         }
 
         @Override
@@ -346,7 +350,7 @@ public class PVPactivity extends ActionBarActivity {
                 return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("socketos", e.getCause().toString());
+                Log.v("socketos", "");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
@@ -360,14 +364,14 @@ public class PVPactivity extends ActionBarActivity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=3)&&(!"RGetHeroAttribute".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=3)){
                     throw new JSONException("");
                 }
                 recString=jobject.getString("Content");
                 JSONArray jsonArray = new JSONArray(recString);
                 jsonObject = jsonArray.getJSONObject(0);
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                Log.v("bR IOException","");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);

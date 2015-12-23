@@ -53,8 +53,8 @@ public class GameActivity extends Activity {
    // private final int PVE_START=5;
 
 
-    private final String HOST = "";
-    private final int PORT = 8888;
+    final private String HOST = HOSTInfo.HOST;
+    final private int PORT = HOSTInfo.PORT;
 
 
     private ImageView talentbtn;
@@ -101,11 +101,11 @@ public class GameActivity extends Activity {
         pvpbtn=(ImageView)findViewById(R.id.pvp);
         pvebtn=(ImageView)findViewById(R.id.pve);
         hp = mainBundle.getInt("HP");
-        name = mainBundle.getString("name");
+        name = mainBundle.getString("Name");
         lv=mainBundle.getInt("lv");
         exp=mainBundle.getInt("exp");
         ((TextView)findViewById(R.id.game_name)).setText(name+" "+hp);
-        ((TextView)findViewById(R.id.game_exp)).setText("lv."+lv+" "+exp);
+        ((TextView)findViewById(R.id.game_exp)).setText("lv."+lv+" | "+exp);
         power=mainBundle.getInt("Power");
         intel=mainBundle.getInt("Intel");
         agi=mainBundle.getInt("Agi");
@@ -115,12 +115,12 @@ public class GameActivity extends Activity {
         AbiliAvailable=mainBundle.getInt("AbiliAvailable");
         AttriAvailable=mainBundle.getInt("AttriAvailable");
         ID = mainBundle.getString("ID");
-        ((TextView)findViewById(R.id.game_intel)).setText(intel);
-        ((TextView)findViewById(R.id.game_agi)).setText(agi);
-        ((TextView)findViewById(R.id.game_lucky)).setText(lucky);
-        ((TextView)findViewById(R.id.game_atk)).setText(atk);
-        ((TextView)findViewById(R.id.game_defense)).setText(defense);
-        ((TextView)findViewById(R.id.game_power)).setText(power);
+        ((TextView)findViewById(R.id.game_intel)).setText(""+intel);
+        ((TextView)findViewById(R.id.game_agi)).setText(""+agi);
+        ((TextView)findViewById(R.id.game_lucky)).setText(""+lucky);
+        ((TextView)findViewById(R.id.game_atk)).setText(""+atk);
+        ((TextView)findViewById(R.id.game_defense)).setText(""+defense);
+        ((TextView)findViewById(R.id.game_power)).setText(""+power);
         dialog = (LinearLayout)findViewById(R.id.game_dialog);
         dialog_txt = (TextView)findViewById(R.id.game_dialog_txt);
         dialog_listView = (ListView)findViewById(R.id.game_dialog_listView);
@@ -140,14 +140,14 @@ public class GameActivity extends Activity {
                 new Thread(pveThread).start();
             }
         });
-        difficulty_easy.setOnClickListener(new View.OnClickListener() {
+        difficulty_normal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pveThread pveThread = new pveThread(HOST,PORT,ID,2);
                 new Thread(pveThread).start();
             }
         });
-        difficulty_easy.setOnClickListener(new View.OnClickListener() {
+        difficulty_difficult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pveThread pveThread = new pveThread(HOST,PORT,ID,3);
@@ -160,7 +160,8 @@ public class GameActivity extends Activity {
                     public void onClick(View v) {
                         Intent in = new Intent(GameActivity.this,TalentActivity.class);
                         in.putExtras(mainBundle);
-                        startNewActivity(in);
+                        startActivity(in);
+                        finish();
                     }
                 }
         );
@@ -234,7 +235,7 @@ public class GameActivity extends Activity {
                         startNewActivity(in);break;
                     case CONNECT_SUCCESS:
                         dialog_txt.setText("请选择对手");
-
+                        dialog_listView.setVisibility(View.VISIBLE);
                         setListView((JSONArray) msg.obj);break;
                     case PVP_START:
                         mainBundle.putString("fight", (String) msg.obj);
@@ -278,7 +279,14 @@ public class GameActivity extends Activity {
             Map<String,Object> listitem = new HashMap<String, Object>();
             listitem.put("game_lsv_name",HeroName);
             listitem.put("game_lsv_lv",Level);
-            listitem.put("game_lsv_hero", HeroType);
+            if(HeroType==1){
+                listitem.put("game_lsv_hero","战士");
+            }else if(HeroType==2){
+                listitem.put("game_lsv_hero","忍者");
+            }else{
+                listitem.put("game_lsv_hero", "法师");
+            }
+            //listitem.put("game_lsv_hero", HeroType);
             listitem.put("game_lsv_id", RoleID);
             listItems.add(listitem);
 
@@ -342,7 +350,7 @@ public class GameActivity extends Activity {
                 return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("socketos", e.getCause().toString());
+                Log.v("socketos", "");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
@@ -357,13 +365,13 @@ public class GameActivity extends Activity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=4)&&(!"RGetUserList".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=4)){
                     throw new JSONException("");
                 }
                 recString=jobject.getString("Content");
                 jsonArray = new JSONArray(recString);
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                Log.v("bR IOException","");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
@@ -387,8 +395,7 @@ public class GameActivity extends Activity {
         public pvpThread(String host, int port, String userID, String enemyID) {
             this.host = host;
             this.port = port;
-            pvp.UserID = userID;
-            pvp.EnemyID = enemyID;
+            pvp= new PVP(userID,enemyID);
         }
 
         String host;
@@ -411,7 +418,7 @@ public class GameActivity extends Activity {
             try {
                 ArrayList<PVP> alist = new ArrayList<>();
                 alist.add(pvp);
-                String jsonString = Jsons.buildJson(7, "GetUserList", 1, Jsons.buildJsonArray(alist).toString());
+                String jsonString = Jsons.buildJson(7, "PVP", 1, Jsons.buildJsonArray(alist).toString());
                 Log.d("jsons", jsonString);
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
                 writer.write(jsonString);writer.newLine();
@@ -424,7 +431,7 @@ public class GameActivity extends Activity {
                 return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("socketos", e.getCause().toString());
+                Log.v("socketos", "");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
@@ -439,12 +446,12 @@ public class GameActivity extends Activity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=7)&&(!"RPVP".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=7)){
                     throw new JSONException("");
                 }
                 recString=jobject.getString("Content");
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                Log.v("bR IOException","");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
@@ -466,8 +473,7 @@ public class GameActivity extends Activity {
         public pveThread(String host, int port, String userID, int Difficulty) {
             this.host = host;
             this.port = port;
-            pve.UserID = userID;
-            pve.Difficulty = Difficulty;
+            pve= new PVE(Difficulty,userID);
         }
 
         String host;
@@ -490,7 +496,7 @@ public class GameActivity extends Activity {
             try {
                 ArrayList<PVE> alist = new ArrayList<>();
                 alist.add(pve);
-                String jsonString = Jsons.buildJson(7, "GetUserList", 1, Jsons.buildJsonArray(alist).toString());
+                String jsonString = Jsons.buildJson(6, "PVE", 1, Jsons.buildJsonArray(alist).toString());
                 Log.d("jsons", jsonString);
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
                 writer.write(jsonString);writer.newLine();
@@ -503,7 +509,7 @@ public class GameActivity extends Activity {
                 return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("socketos", e.getCause().toString());
+                Log.v("socketos", "");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
@@ -518,18 +524,24 @@ public class GameActivity extends Activity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=6)&&(!"RPVE".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=6)){
                     throw new JSONException("");
                 }
                 recString=jobject.getString("Content");
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                Log.v("bR IOException","");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
                 return;
             }catch (JSONException e){
                 Toast.makeText(getApplicationContext(), "校验失败", Toast.LENGTH_SHORT).show();
+                return;
+            }catch (NullPointerException e){
+                Log.v("bR IOException","");
+                msg = mHandler.obtainMessage();
+                msg.arg1=CONNECT_FAILED;
+                mHandler.sendMessage(msg);
                 return;
             }
 

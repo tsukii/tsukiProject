@@ -52,17 +52,19 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:layout_margin="10dp" />
+                android:layout_margin="10dp"
+                android:textColor="@color/gray"/>
             <TextView
                 android:id="@+id/main_role_2"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="法师"
+                android:text="忍者"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:layout_margin="10dp" />
+                android:layout_margin="10dp"
+                android:textColor="@color/gray"/>
             <TextView
                 android:id="@+id/main_role_3"
                 android:layout_width="0dip"
@@ -72,7 +74,8 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:layout_margin="10dp" />
+                android:layout_margin="10dp"
+                android:textColor="@color/gray"/>
         </LinearLayout>
     </LinearLayout>
 

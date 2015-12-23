@@ -49,7 +49,7 @@ public class RPVP {
 		Damage = damage;
 	}
 
-	public boolean isIsMiss() {
+	public boolean getIsMiss() {
 		return IsMiss;
 	}
 

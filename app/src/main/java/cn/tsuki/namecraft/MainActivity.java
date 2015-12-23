@@ -33,6 +33,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -71,8 +72,8 @@ public class MainActivity extends Activity {
     private TextView role2;
     private TextView role3;
 
-    final private String HOST = "192.168.1.106";
-    final private int PORT = 8888;
+    final private String HOST = HOSTInfo.HOST;
+    final private int PORT = HOSTInfo.PORT;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,34 +91,35 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 hero_type=1;
-                role1.setBackgroundColor(0x888888);
-                role2.setBackgroundColor(0xffffff);
-                role3.setBackgroundColor(0xffffff);
+                role1.setTextColor(Color.parseColor("#000000"));
+                role2.setTextColor(Color.parseColor("#888888"));
+                role3.setTextColor(Color.parseColor("#888888"));
             }
         });
         role2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hero_type=2;
-                role2.setBackgroundColor(0x888888);
-                role1.setBackgroundColor(0xffffff);
-                role3.setBackgroundColor(0xffffff);
+                role2.setTextColor(Color.parseColor("#000000"));
+                role1.setTextColor(Color.parseColor("#888888"));
+                role3.setTextColor(Color.parseColor("#888888"));
             }
         });
         role3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hero_type=3;
-                role3.setBackgroundColor(0x888888);
-                role2.setBackgroundColor(0xffffff);
-                role1.setBackgroundColor(0xffffff);
+                role3.setTextColor(Color.parseColor("#000000"));
+                role2.setTextColor(Color.parseColor("#888888"));
+                role1.setTextColor(Color.parseColor("#888888"));
             }
         });
         relayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(login_status==NEW_ACTIVITY){
-
+                    getAttiThread getAttiThread = new getAttiThread(HOST,PORT);
+                    new Thread(getAttiThread).start();
                 }else if(login_status==FIRST_CONNECT){
                     String name = ((EditText)findViewById(R.id.Main_edit)).getText().toString();
                     if(name.equals("")){
@@ -126,6 +128,7 @@ public class MainActivity extends Activity {
                         Toast.makeText(getApplicationContext(),"请选择职业",Toast.LENGTH_SHORT).show();
                     }else{
                         createHeroThread th_create = new createHeroThread(HOST, PORT, name, hero_type);
+                        new Thread(th_create).start();
                     }
                 }else {
                     connectThread thread_connect = new connectThread(HOST, PORT);
@@ -141,9 +144,9 @@ public class MainActivity extends Activity {
             public void handleMessage(Message msg){
                 super.handleMessage(msg);
                 switch (msg.arg1){
-                    case CONNECTING:txtview.setText("正在连接...");relayout.setClickable(false);break;
+                    case CONNECTING:txtview.setText("正在连接...,若没有反应，请再点一次");relayout.setClickable(false);break;
                     case CONNECT_FAILED:txtview.setText("连接失败,点击屏幕重新连接");relayout.setClickable(true);break;
-                    case CONNECT_SUCCESS:txtview.setText("连接成功");break;
+                    case CONNECT_SUCCESS:txtview.setText("连接成功,若没有反应，请再点一次");break;
                     case FIRST_CONNECT:txtview.setText("请输入您的名字并选择职业");
                         findViewById(R.id.MainTitle).setVisibility(View.INVISIBLE);
                         //findViewById(R.id.main_layout).clearAnimation();
@@ -280,7 +283,7 @@ public class MainActivity extends Activity {
                 return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("socketos", e.getCause().toString());
+                //Log.v("socketos", e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 msg.arg2=TEXT_CLICK_ABL;
@@ -294,12 +297,11 @@ public class MainActivity extends Activity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=2)&&("RCreateHero".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=2)){
                     throw new JSONException("");
                 }
-                recString=jobject.getString("Content");
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+               // Log.v("bR IOException",e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 msg.arg2=TEXT_CLICK_ABL;
@@ -316,21 +318,9 @@ public class MainActivity extends Activity {
                 }
             }
 
-            try {
-                JSONArray jsonArray = new JSONArray(recString);
-                JSONObject jobject = jsonArray.getJSONObject(0);
-                if(jobject.getInt("ReturnNum")==0){
-                    throw new JSONException("");
-                }
-            }catch (JSONException e){
-                Toast.makeText(getApplicationContext(), "连接错误", Toast.LENGTH_SHORT).show();
-                return;
-            }finally {
-                msg=mHandler.obtainMessage();
-                msg.arg1=TEXT_CLICK_ABL;
-                mHandler.sendMessage(msg);
-
-            }
+            msg = mHandler.obtainMessage();
+            msg.arg1 = TEXT_CLICK_ABL;
+            mHandler.sendMessage(msg);
 
             login_status=NEW_ACTIVITY;
 
@@ -355,7 +345,7 @@ public class MainActivity extends Activity {
             Message msg =mHandler.obtainMessage();
             msg.arg1=TEXT_CLICK_DIS;
             mHandler.sendMessage(msg);
-            Login login = new Login();
+            Login login = new Login(0,null,null);
             SharedPreferences pref = getSharedPreferences("setting", Context.MODE_PRIVATE);
             ID=pref.getString("ID","");
             password=pref.getString("password","");
@@ -364,6 +354,7 @@ public class MainActivity extends Activity {
                 Log.v("First login",ID+" "+password);
                 login_status=FIRST_CONNECT;
                 login.setFirstLogin(1);
+                //Log.v("fff","");
             }else{
                 login.setFirstLogin(0);
                 login.setUserId(ID);
@@ -371,13 +362,15 @@ public class MainActivity extends Activity {
                 login_status=NEW_ACTIVITY;
             }
 
-            Log.v("else","");
+
+            Log.v("else","hhhhh");
             //登录
 
             Socket mSocket =null;
             msg = mHandler.obtainMessage();
             msg.arg1=CONNECTING;
             mHandler.sendMessage(msg);
+            Log.v("IP",host+" "+port);
             try{
                 mSocket=new Socket(host,port);
                 mSocket.setSoTimeout(1000);
@@ -394,7 +387,7 @@ public class MainActivity extends Activity {
             mHandler.sendMessage(msg);
             //TODO 发送login请求
             try {
-                ArrayList<Login> alist = new ArrayList<>();
+                List<Login> alist = new ArrayList<>();
                 alist.add(login);
                 String jsonString = Jsons.buildJson(5, "Login", 1, Jsons.buildJsonArray(alist).toString());
                 Log.d("jsons", jsonString);
@@ -404,7 +397,7 @@ public class MainActivity extends Activity {
                 //mSocket.shutdownOutput();
             }catch (JSONException e){
                 e.printStackTrace();
-                Log.v("buildjosn", e.getCause().toString());
+                //Log.v("buildjosn", e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 msg.arg2=TEXT_CLICK_ABL;
@@ -412,7 +405,7 @@ public class MainActivity extends Activity {
                 return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("socketos", e.getCause().toString());
+                //Log.v("socketos", e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 msg.arg2=TEXT_CLICK_ABL;
@@ -429,12 +422,12 @@ public class MainActivity extends Activity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=5)&&("RLogin".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=5)){
                     throw new JSONException("");
                 }
                 recString=jobject.getString("Content");
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                //Log.v("bR IOException",e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 msg.arg2=TEXT_CLICK_ABL;
@@ -529,7 +522,7 @@ public class MainActivity extends Activity {
                 return;
             }catch (IOException e){
                 e.printStackTrace();
-                Log.v("socketos", e.getCause().toString());
+               // Log.v("socketos", e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 msg.arg2=TEXT_CLICK_ABL;
@@ -544,14 +537,14 @@ public class MainActivity extends Activity {
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=3)&&(!"RGetHeroAttribute".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=3)){
                     throw new JSONException("");
                 }
                 recString=jobject.getString("Content");
                 JSONArray jsonArray = new JSONArray(recString);
                 jsonObject = jsonArray.getJSONObject(0);
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                //Log.v("bR IOException",e.getCause().toString());
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 msg.arg2=TEXT_CLICK_ABL;

@@ -35,8 +35,8 @@ import cn.tsuki.namecraft.jsonTools.Jsons;
  */
 public class TalentActivity extends Activity{
 
-    final private String HOST = "192.168.1.106";
-    final private int PORT = 8888;
+    final private String HOST = HOSTInfo.HOST;
+    final private int PORT = HOSTInfo.PORT;
 
     private final int CONNECTING=1;
     private final int CONNECT_FAILED=2;
@@ -76,7 +76,7 @@ public class TalentActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_talent);
         mBundle = getIntent().getExtras();
-        ((TextView)findViewById(R.id.talent_name)).setText(mBundle.getString("name"));
+        ((TextView)findViewById(R.id.talent_name)).setText(mBundle.getString("Name"));
         ((TextView)findViewById(R.id.talent_experience)).setText("lv." + mBundle.getInt("lv") + " " + mBundle.getInt("exp"));
         AttriAvailable = mBundle.getInt("AttriAvailable");
         bePower=afPower=mBundle.getInt("Power");
@@ -93,15 +93,15 @@ public class TalentActivity extends Activity{
         txt_beLucky = (TextView)findViewById(R.id.lucBeforeChanged);
         txt_afLucky = (TextView)findViewById(R.id.lucAfterChanged);
 
-        txt_AttriAvailable.setText(AttriAvailable);
-        txt_bePower.setText(bePower);
-        txt_beLucky.setText(beLucky);
-        txt_beIntel.setText(beIntel);
-        txt_beAgi.setText(beAgi);
-        txt_afPower.setText(afPower);
-        txt_afIntel.setText(afIntel);
-        txt_afAgi.setText(afAgi);
-        txt_afLucky.setText(afLucky);
+        txt_AttriAvailable.setText(""+AttriAvailable);
+        txt_bePower.setText(""+bePower);
+        txt_beLucky.setText(""+beLucky);
+        txt_beIntel.setText(""+beIntel);
+        txt_beAgi.setText(""+beAgi);
+        txt_afPower.setText(""+afPower);
+        txt_afIntel.setText(""+afIntel);
+        txt_afAgi.setText(""+afAgi);
+        txt_afLucky.setText(""+afLucky);
 
         increasebtn = (Button)findViewById(R.id.increasebtn1);
         increasebtn.setOnClickListener(new View.OnClickListener() {
@@ -110,8 +110,8 @@ public class TalentActivity extends Activity{
                 if (AttriAvailable > 0) {
                     afPower++;
                     AttriAvailable--;
-                    txt_AttriAvailable.setText(AttriAvailable);
-                    txt_afPower.setText(afPower);
+                    txt_AttriAvailable.setText(""+AttriAvailable);
+                    txt_afPower.setText(""+afPower);
                 }
             }
         });
@@ -122,8 +122,8 @@ public class TalentActivity extends Activity{
                 if (afPower > bePower) {
                     afPower--;
                     AttriAvailable++;
-                    txt_AttriAvailable.setText(AttriAvailable);
-                    txt_afPower.setText(afPower);
+                    txt_AttriAvailable.setText(""+AttriAvailable);
+                    txt_afPower.setText(""+afPower);
                 }
             }
         });
@@ -134,8 +134,8 @@ public class TalentActivity extends Activity{
                 if(AttriAvailable>0){
                     afIntel++;
                     AttriAvailable--;
-                    txt_AttriAvailable.setText(AttriAvailable);
-                    txt_afIntel.setText(afIntel);
+                    txt_AttriAvailable.setText(""+AttriAvailable);
+                    txt_afIntel.setText(""+afIntel);
                 }
             }
         });
@@ -146,8 +146,8 @@ public class TalentActivity extends Activity{
                 if(afIntel>beIntel){
                     afIntel--;
                     AttriAvailable++;
-                    txt_AttriAvailable.setText(AttriAvailable);
-                    txt_afIntel.setText(afIntel);
+                    txt_AttriAvailable.setText(""+AttriAvailable);
+                    txt_afIntel.setText(""+afIntel);
                 }
             }
         });
@@ -158,8 +158,8 @@ public class TalentActivity extends Activity{
                 if(AttriAvailable>0){
                     afAgi++;
                     AttriAvailable--;
-                    txt_AttriAvailable.setText(AttriAvailable);
-                    txt_afAgi.setText(afAgi);
+                    txt_AttriAvailable.setText(""+AttriAvailable);
+                    txt_afAgi.setText(""+afAgi);
                 }
             }
         });
@@ -170,8 +170,8 @@ public class TalentActivity extends Activity{
                 if(afAgi>beAgi){
                     afAgi--;
                     AttriAvailable++;
-                    txt_AttriAvailable.setText(AttriAvailable);
-                    txt_afAgi.setText(afAgi);
+                    txt_AttriAvailable.setText(""+AttriAvailable);
+                    txt_afAgi.setText(""+afAgi);
                 }
             }
         });
@@ -182,8 +182,8 @@ public class TalentActivity extends Activity{
                 if(AttriAvailable>0){
                     afLucky++;
                     AttriAvailable--;
-                    txt_AttriAvailable.setText(AttriAvailable);
-                    txt_afLucky.setText(afLucky);
+                    txt_AttriAvailable.setText(""+AttriAvailable);
+                    txt_afLucky.setText(""+afLucky);
                 }
             }
         });
@@ -194,8 +194,8 @@ public class TalentActivity extends Activity{
                 if(afLucky>beLucky){
                     afLucky--;
                     AttriAvailable++;
-                    txt_AttriAvailable.setText(AttriAvailable);
-                    txt_afLucky.setText(afLucky);
+                    txt_AttriAvailable.setText(""+AttriAvailable);
+                    txt_afLucky.setText(""+afLucky);
                 }
             }
         });
@@ -341,7 +341,7 @@ public class TalentActivity extends Activity{
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=1)&&("RAllocate".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=1)){
                     throw new JSONException("");
                 }
                 String recString=jobject.getString("Content");
@@ -351,7 +351,7 @@ public class TalentActivity extends Activity{
                     throw new JSONException("");
                 }
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                Log.v("bR IOException","");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
@@ -387,14 +387,14 @@ public class TalentActivity extends Activity{
                 String jsonString = bf.readLine();
                 Log.d("bfr", jsonString);
                 JSONObject jobject = new JSONObject(jsonString);
-                if((jobject.getInt("JsonType")!=3)&&("RGetHeroAttribute".equals(jobject.getString("ObjectType")))){
+                if((jobject.getInt("JsonType")!=3)){
                     throw new JSONException("");
                 }
                 String recString=jobject.getString("Content");
                 JSONArray jsonArray = new JSONArray(recString);
                 jsonObject = jsonArray.getJSONObject(0);
             }catch (IOException e){
-                Log.v("bR IOException",e.getCause().toString());
+                Log.v("bR IOException","");
                 msg = mHandler.obtainMessage();
                 msg.arg1=CONNECT_FAILED;
                 mHandler.sendMessage(msg);
