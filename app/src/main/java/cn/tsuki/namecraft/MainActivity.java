@@ -1,15 +1,18 @@
 package cn.tsuki.namecraft;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -447,8 +450,15 @@ public class MainActivity extends Activity {
             try {
                 JSONArray jsonArray = new JSONArray(recString);
                 JSONObject jobject = jsonArray.getJSONObject(0);
-                ID = jobject.getString("UserId");
-                password = jobject.getString("UserPassword");
+                Log.v("test","test"+jobject.getInt("ReturnNum"));
+                if(jobject.getInt("ReturnNum")==0){
+                    ID="";
+                    password="";
+                    login_status=0;
+                }else {
+                    ID = jobject.getString("UserId");
+                    password = jobject.getString("UserPassword");
+                }
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString("ID",ID);
                 editor.putString("password",password);
@@ -592,4 +602,37 @@ public class MainActivity extends Activity {
     }
 
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            System.exit(0);
+
+
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    //注册一个广播的内部类，当收到关闭事件时，调用finish方法结束当前的Activity
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //在当前的activity中注册广播
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalVarable.EXIT_ACTION);
+        this.registerReceiver(this.broadcastReceiver, filter);
+    }
+
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        this.unregisterReceiver(this.broadcastReceiver);
+    }
 }

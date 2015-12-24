@@ -11,17 +11,20 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/NoAnimation">
         </activity>
         <activity
             android:name=".TalentActivity"
             android:label="@string/app_name"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/NoAnimation">
         </activity>
         <activity
             android:name=".AbilityActivity"
             android:label="@string/app_name"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/NoAnimation">
         </activity>
         <activity
             android:name=".LaunchActivity"
@@ -41,7 +44,8 @@
         <activity
             android:name=".PVPactivity"
             android:label="@string/app_name"
-            android:theme="@style/NoAnimation">
+            android:theme="@style/NoAnimation"
+            android:screenOrientation="sensorLandscape">
         </activity>
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>

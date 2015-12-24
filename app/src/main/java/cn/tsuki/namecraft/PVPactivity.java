@@ -1,14 +1,17 @@
 package cn.tsuki.namecraft;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -213,6 +216,7 @@ public class PVPactivity extends Activity {
         int HPD=0;
         int AbDamage=0;
         int AbCure=0;
+        int exp=0;
         String txt_Fight =null;
         JSONObject jsonObject=null;
         try {
@@ -227,6 +231,7 @@ public class PVPactivity extends Activity {
             HPD = jsonObject.getInt("HPD");
             AbDamage = jsonObject.getInt("AbDamage");
             AbCure = jsonObject.getInt("AbCure");
+            exp = jsonObject.getInt("Exp");
         }catch (JSONException e){
 
         }
@@ -246,7 +251,7 @@ public class PVPactivity extends Activity {
                 txt_Fight+=(",造成了"+Damage+"点伤害");
             }
         }else{
-            txt_Fight = AttackID + "发动技能"+Ability_name[AbIndex]+"，对" + DefenseID + "造成了"+AbDamage+"点伤害";
+            txt_Fight = AttackID + "发动技能"+Ability_name[AbIndex-1]+"，对" + DefenseID + "造成了"+AbDamage+"点伤害";
             if(AbCure>0){
                 txt_Fight+=(",回复生命值"+AbCure+"点");
             }
@@ -254,7 +259,9 @@ public class PVPactivity extends Activity {
 
         if(HPD<=0){
             txt_Fight+=("\n"+AttackID+"获得胜利！");
+            txt_Fight+="\n您获得了"+exp+"点经验";
         }
+
 
         Log.v("fp", txt_Fight);
 
@@ -264,7 +271,7 @@ public class PVPactivity extends Activity {
         listItems.add(listitem);
         //listView.setAdapter(simpleAdapter);
         simpleAdapter.notifyDataSetChanged();
-
+        listView.setSelection(round+1);
     }
 
     private void fight(){
@@ -413,5 +420,40 @@ public class PVPactivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+            timerTaskCancel();
+            getAttiThread getAttiThread = new getAttiThread(HOST,PORT);
+            new Thread(getAttiThread).start();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    //注册一个广播的内部类，当收到关闭事件时，调用finish方法结束当前的Activity
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //在当前的activity中注册广播
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalVarable.EXIT_ACTION);
+        this.registerReceiver(this.broadcastReceiver, filter);
+    }
+
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        this.unregisterReceiver(this.broadcastReceiver);
     }
 }

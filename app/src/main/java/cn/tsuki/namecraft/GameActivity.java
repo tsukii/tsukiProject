@@ -1,13 +1,16 @@
 package cn.tsuki.namecraft;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -104,7 +107,7 @@ public class GameActivity extends Activity {
         name = mainBundle.getString("Name");
         lv=mainBundle.getInt("lv");
         exp=mainBundle.getInt("exp");
-        ((TextView)findViewById(R.id.game_name)).setText(name+" "+hp);
+        ((TextView)findViewById(R.id.game_name)).setText(name+" | "+hp);
         ((TextView)findViewById(R.id.game_exp)).setText("lv."+lv+" | "+exp);
         power=mainBundle.getInt("Power");
         intel=mainBundle.getInt("Intel");
@@ -552,4 +555,48 @@ public class GameActivity extends Activity {
             mHandler.sendMessage(msg);
         }
     }
+
+    private long exitTime=0;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+            if((System.currentTimeMillis()-exitTime) > 2000){
+                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                Intent intent = new Intent(); intent.setAction(GlobalVarable.EXIT_ACTION); // 退出动作
+                this.sendBroadcast(intent);// 发送广播
+                super.finish(); //退出后台线程
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+        //注册一个广播的内部类，当收到关闭事件时，调用finish方法结束当前的Activity
+        private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish();
+            }
+        };
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            //在当前的activity中注册广播
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(GlobalVarable.EXIT_ACTION);
+            this.registerReceiver(this.broadcastReceiver, filter);
+        }
+
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        this.unregisterReceiver(this.broadcastReceiver);
+    }
+
+
 }

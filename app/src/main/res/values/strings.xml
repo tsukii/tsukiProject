@@ -48,4 +48,7 @@
 
 
     <string name="contract_us">联系我们\n583288152@qq.com\n409082492@qq.com</string>
+
+
+    <string name="inputIP">请输入服务器的IP地址</string>
 </resources>
